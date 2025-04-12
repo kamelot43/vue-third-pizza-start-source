@@ -1,15 +1,11 @@
 <template>
-<app-layout>
-  <home-view />
-</app-layout>
+  <app-layout>
+    <router-view />
+  </app-layout>
 </template>
 
 <script>
-import { AppLayout } from "@/layouts";
-import { HomeView } from "@/views";
-export default {
-  components: {HomeView, AppLayout}
-}
+import AppLayout from "@/layouts/AppLayout.vue";
 </script>
 
 <style lang="scss">

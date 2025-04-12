@@ -11,36 +11,16 @@
           :transferData="ingredient" 
           :draggable="canDrag(ingredient)"
         >
-           <span class="filling" :class="`filling--${ingredient.name}`" style="display: inline-block;">
-              <img :src="getImage(ingredient.image)" :alt="ingredient.name" draggable="false">
-              {{ ingredient.name }}
-            </span>
+        <span class="filling" :class="`filling--${ingredient.name}`" style="display: inline-block;">
+          <img :src="getImage(ingredient.image)" :alt="ingredient.name" draggable="false">
+          {{ ingredient.name }}
+        </span>
         </AppDrag>
-        <div class="counter counter--orange ingredients__counter">
-          <button 
-            type="button" 
-            class="counter__button counter__button--minus" 
-            :disabled="getCount(ingredient.id) <= 0"
-            @click="decrement(ingredient.id)"
-          >
-            <span class="visually-hidden">Меньше</span>
-          </button>
-          <input 
-            type="text" 
-            name="counter" 
-            class="counter__input" 
-            :value="getCount(ingredient.id)"
-            @input="handleInput($event, ingredient.id)"
-          />
-          <button 
-            type="button" 
-            class="counter__button counter__button--plus"
-            :disabled="getCount(ingredient.id) >= 3"
-            @click="increment(ingredient.id)"
-          >
-            <span class="visually-hidden">Больше</span>
-          </button>
-        </div>
+        <IngredientsCounter
+          v-model="modelValue[ingredient.id].count"
+          :min="0"
+          :max="3"
+        />
       </li>
     </ul>
   </div>
@@ -49,6 +29,7 @@
 <script setup>
 import {defineProps} from "vue";
 import AppDrag from "@/common/components/AppDrag.vue";
+import IngredientsCounter from "@/common/components/IngredientsCounter.vue";
 
 const props = defineProps({
   ingredientItems: {
@@ -71,41 +52,6 @@ const canDrag = (ingredient) => {
   return getCount(ingredient.id) < 3;
 };
 
-const increment = (ingredientId) => {
-  const currentCount = getCount(ingredientId);
-  if (currentCount < 3) {
-    updateCount(ingredientId, currentCount + 1);
-  }
-};
-
-const decrement = (ingredientId) => {
-  const currentCount = getCount(ingredientId);
-  if (currentCount > 0) {
-    updateCount(ingredientId, currentCount - 1);
-  }
-};
-
-const handleInput = (event, ingredientId) => {
-  const value = parseInt(event.target.value);
-  if (!isNaN(value) && value >= 0 && value <= 3) {
-    updateCount(ingredientId, value);
-  }
-};
-
-const updateCount = (ingredientId, newCount) => {
-  const updatedValue = { ...props.modelValue };
-  updatedValue[ingredientId] = {
-    ...updatedValue[ingredientId],
-    count: newCount
-  };
-  emit('update:modelValue', updatedValue);
-};
-
-const handleDragEnd = (ingredient) => {
-  if (canDrag(ingredient)) {
-    increment(ingredient.id);
-  }
-};
 
 const getImage = (image) => {
   return new URL(`../../assets/img/${image}`, import.meta.url).href;
@@ -152,39 +98,5 @@ const getImage = (image) => {
   height: 32px;
   transform: translateY(-50%);
   border-radius: 50%;
-}
-
-.counter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 54px;
-  margin-top: 10px;
-  margin-left: 36px;
-}
-
-.counter__button {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.counter__button--minus {
-  background-color: #f0e6ff;
-}
-
-.counter__button--plus {
-  background-color: #6c5ce7;
-}
-
-.counter__input {
-  width: 22px;
-  text-align: center;
-  border: none;
-  outline: none;
-  background-color: transparent;
 }
 </style>
