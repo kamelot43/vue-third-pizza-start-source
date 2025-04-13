@@ -16,10 +16,12 @@
           {{ ingredient.name }}
         </span>
         </AppDrag>
-        <IngredientsCounter
-          v-model="modelValue[ingredient.id].count"
+        <AppCounter
+          v-model:count="modelValue[ingredient.id].count"
           :min="0"
           :max="3"
+          class="ingredients__counter"
+          modifier="counter--orange"
         />
       </li>
     </ul>
@@ -29,7 +31,7 @@
 <script setup>
 import {defineProps} from "vue";
 import AppDrag from "@/common/components/AppDrag.vue";
-import IngredientsCounter from "@/common/components/IngredientsCounter.vue";
+import AppCounter from "@/common/components/AppCounter.vue";
 
 const props = defineProps({
   ingredientItems: {

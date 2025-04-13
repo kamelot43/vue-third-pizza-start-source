@@ -1,9 +1,9 @@
 <template>
-    <div class="counter counter--orange ingredients__counter">
+    <div :class="['counter', baseClass, modifier]">
       <button
         type="button"
         class="counter__button counter__button--minus"
-        :disabled="modelValue <= min"
+        :disabled="count <= min"
         @click="decrement"
       >
         <span class="visually-hidden">Меньше</span>
@@ -12,13 +12,13 @@
         type="text"
         name="counter"
         class="counter__input"
-        :value="modelValue"
+        :value="count"
         @input="handleInput"
       />
       <button
         type="button"
         class="counter__button counter__button--plus"
-        :disabled="modelValue >= max"
+        :disabled="count >= max"
         @click="increment"
       >
         <span class="visually-hidden">Больше</span>
@@ -30,7 +30,7 @@
   import { defineProps, defineEmits } from 'vue';
   
   const props = defineProps({
-    modelValue: {
+    count: {
       type: Number,
       required: true
     },
@@ -41,20 +41,28 @@
     max: {
       type: Number,
       default: 3
+    },
+    class: {
+      type: String,
+      default: ''
+    },
+    modifier: {
+      type: String,
+      default: ''
     }
   });
   
-  const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:count']);
   
   const increment = () => {
-    if (props.modelValue < props.max) {
-      emit('update:modelValue', props.modelValue + 1);
+    if (props.count < props.max) {
+      emit('update:count', props.count + 1);
     }
   };
   
   const decrement = () => {
-    if (props.modelValue > props.min) {
-      emit('update:modelValue', props.modelValue - 1);
+    if (props.count > props.min) {
+      emit('update:count', props.count - 1);
     }
   };
   
@@ -62,7 +70,7 @@
   const value = parseInt(event.target.value);
   if (!isNaN(value)) {
     const clampedValue = Math.max(props.min, Math.min(props.max, value));
-    emit('update:modelValue', clampedValue);
+    emit('update:count', clampedValue);
   }
 };
   </script>
