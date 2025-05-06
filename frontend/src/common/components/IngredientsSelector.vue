@@ -56,7 +56,8 @@ const canDrag = (ingredient) => {
 
 
 const getImage = (image) => {
-  return new URL(`../../assets/img/${image}`, import.meta.url).href;
+  const [folder, file] = image.split('/');
+  return new URL(`../../assets/img/${folder}/${file}`, import.meta.url).href;
 };
 </script>
 
