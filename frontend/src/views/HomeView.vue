@@ -7,14 +7,16 @@
 
         <!-- Компонент выбора теста -->
         <DoughSelector 
-          :doughItems="doughItems"
-          v-model:modelValue="pizza.dough"
+          :doughItems="dataStore.doughs"
+          v-model="pizzaStore.dough"
+          @update:modelValue="pizzaStore.setDough"
         />
 
         <!-- Компонент выбора размера -->
         <SizeSelector 
-          :sizeItems="sizeItems"
-          v-model:modelValue="pizza.size"
+          :sizeItems="dataStore.sizes"
+          v-model="pizzaStore.size"
+          @update:modelValue="pizzaStore.setSize"
         />
 
     
@@ -23,12 +25,14 @@
             <h2 class="title title--small sheet__title">Выберите ингредиенты</h2>
             <div class="sheet__content ingredients">
               <SauceSelector 
-                :sauceItems="sauceItems"
-                v-model:modelValue="pizza.sauce"
+                :sauceItems="dataStore.sauces"
+                v-model="pizzaStore.sauce"
+                @update:modelValue="pizzaStore.setSauce"
               />
               <IngredientsSelector 
-                :ingredientItems="ingredientItems"
-                v-model:modelValue="pizza.ingredients"
+                :ingredientItems="dataStore.ingredients"
+                :modelValue="pizzaStore.ingredients"
+                @changeIngredient="handleIngredientChange"
               />
             </div>
           </div>
@@ -58,6 +62,11 @@ import {
   normalizeSauces,
   normalizeSize,
 } from "@/common/helpers/normalize";
+import { usePizzaStore } from '@/stores/pizza';
+import { useDataStore  } from '@/stores/data';
+
+const pizzaStore = usePizzaStore();
+const dataStore = useDataStore();
 
 import DoughSelector from "@/common/components/DoughSelector.vue";
 import SauceSelector  from "@/common/components/SauceSelector.vue";
@@ -98,6 +107,18 @@ const selectedIngredients = computed(() => {
       quantity: item.count
     }));
 });
+
+const handleIngredientChange = (ingredient, newCount) => {
+  // Получаем текущее количество из хранилища
+  const currentCount = pizzaStore.ingredients[ingredient.id]?.count || 0;
+  
+  // Проверяем максимальное значение
+  if (newCount > 3) {
+    return; // Не обновляем, если превысили лимит
+  }
+  
+  pizzaStore.setIngredient(ingredient.id, newCount);
+};
 
 const handleAddIngredient = (ingredient) => {
   if (pizza.ingredients[ingredient.id].count < 3) {

@@ -17,11 +17,12 @@
         </span>
         </AppDrag>
         <AppCounter
-          v-model:count="modelValue[ingredient.id].count"
+          :count="modelValue[ingredient.id]?.count || 0"
           :min="0"
           :max="3"
           class="ingredients__counter"
           modifier="counter--orange"
+          @update:count="updateCount(ingredient, $event)"
         />
       </li>
     </ul>
@@ -44,7 +45,11 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['changeIngredient']);
+
+const updateCount = (ingredient, newCount) => {
+  emit('changeIngredient', ingredient, newCount);
+};
 
 const getCount = (ingredientId) => {
   return props.modelValue[ingredientId]?.count || 0;
