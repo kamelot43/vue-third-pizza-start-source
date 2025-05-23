@@ -72,17 +72,18 @@ const emit = defineEmits(['update:quantity', 'edit']);
 
 const ingredientsList = computed(() => {
   return props.pizza.ingredients
-      .filter(i => i.count > 0)
-      .map(i => i.ingredient.name)
+      .filter(i => i.quantity > 0)  // Используем quantity вместо count
+      .map(i => i.name)             // Прямой доступ к свойству name
       .join(', ');
 });
 
 const getImage = (image) => {
+  console.log('image_cart', image);
   return new URL(`../../assets/img/${image}`, import.meta.url).href;
 };
 
 const updateQuantity = (delta) => {
-  const newValue = Math.max(1, props.pizza.quantity + delta);
+  const newValue = Math.max(0, props.pizza.quantity + delta);
   emit('update:quantity', newValue);
 };
 </script>

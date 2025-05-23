@@ -75,6 +75,7 @@
 <script setup>
 import { useDataStore  } from '@/stores/data';
 import { useCartStore  } from '@/stores/cart';
+import { useOrdersStore  } from '@/stores/orders';
 import { useRouter } from "vue-router";
 import { computed } from 'vue';
 import PizzaCartItem from '@/common/components/PizzaCartItem.vue';
@@ -84,6 +85,7 @@ import OrderForm from '@/common//components/OrderForm.vue';
 const router = useRouter();
 const cart = useCartStore();
 const data = useDataStore();
+const orders = useOrdersStore();
 
 // Получаем количество дополнительных товаров
 const getMiscQuantity = (id) => {
@@ -109,12 +111,20 @@ const isFormValid = computed(() => {
 
 // Отправка заказа
 const submitOrder = () => {
-    alert('Заказ успешно отправлен');
+  try {
+    // Создаем глубокую копию данных корзины
+    const orderData = JSON.parse(JSON.stringify(cart.$state));
+    // Пересчитываем total перед сохранением
+    orderData.total = cart.total;
+
+    orders.addOrder(orderData);
+    cart.$reset();
+    router.push('user/orders');
+  } catch (error) {
+    alert('Ошибка при оформлении заказа');
+  }
 };
 
-const getImage = (image) => {
-  return new URL(`../assets/img/${image}`, import.meta.url).href;
-};
 </script>
 
 <style lang="scss">

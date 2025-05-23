@@ -23,8 +23,8 @@ export const useCartStore = defineStore("cart", {
       const formattedIngredients = Object.values(pizzaStore.ingredients)
         .filter(item => item.count > 0)
         .map(({ ingredient, count }) => ({
-          ...ingredient,
-          quantity: count
+          ...ingredient,       // Распространяем свойства ингредиента
+          quantity: count      // Добавляем количество
         }));
 
       this.pizzas.push({
@@ -56,6 +56,18 @@ export const useCartStore = defineStore("cart", {
       this.pizzas = this.pizzas.filter(p => p.id !== pizzaId);
     },
 
+    restoreOrder(orderData) {
+      this.$reset();
+
+      this.pizzas = orderData.pizzas.map(pizza => ({
+        ...pizza,
+        ingredients: [...pizza.ingredients]
+      }));
+      this.misc = [...orderData.misc];
+      this.phone = orderData.phone;
+      this.address = { ...orderData.address };
+    },
+
     convertToIngredientsObject(ingredientsArray) {
       return ingredientsArray.reduce((acc, item) => {
         acc[item.id] = { ingredient: item, count: item.quantity };
@@ -76,10 +88,14 @@ export const useCartStore = defineStore("cart", {
       }
     },
 
-    updatePizzaQuantity(id, quantity) {
-      const pizza = this.pizzas.find(p => p.id === id);
-      if (pizza) {
-        pizza.quantity = Math.max(1, quantity);
+    updatePizzaQuantity(pizzaId, newQuantity) {
+      const pizzaIndex = this.pizzas.findIndex(p => p.id === pizzaId);
+      if (pizzaIndex === -1) return;
+
+      if (newQuantity <= 0) {
+        this.pizzas.splice(pizzaIndex, 1);
+      } else {
+        this.pizzas[pizzaIndex].quantity = newQuantity;
       }
     },
 
