@@ -6,30 +6,30 @@
         <h1 class="title title--big">Конструктор пиццы</h1>
 
         <!-- Компонент выбора теста -->
-        <DoughSelector 
+        <DoughSelector
           :doughItems="dataStore.doughs"
           v-model="pizzaStore.dough"
           @update:modelValue="pizzaStore.setDough"
         />
 
         <!-- Компонент выбора размера -->
-        <SizeSelector 
+        <SizeSelector
           :sizeItems="dataStore.sizes"
           v-model="pizzaStore.size"
           @update:modelValue="pizzaStore.setSize"
         />
 
-    
+
         <div class="content__ingredients">
           <div class="sheet">
             <h2 class="title title--small sheet__title">Выберите ингредиенты</h2>
             <div class="sheet__content ingredients">
-              <SauceSelector 
+              <SauceSelector
                 :sauceItems="dataStore.sauces"
                 v-model="pizzaStore.sauce"
                 @update:modelValue="pizzaStore.setSauce"
               />
-              <IngredientsSelector 
+              <IngredientsSelector
                 :ingredientItems="dataStore.ingredients"
                 :modelValue="pizzaStore.ingredients"
                 @changeIngredient="handleIngredientChange"
@@ -40,12 +40,13 @@
 
         <!-- Компонент отображения пиццы -->
         <PizzaDisplay
-          :dough="pizza.dough"
-          :sauce="pizza.sauce"
-          :ingredients="selectedIngredients"
-          :size="pizza.size"
-          v-model="pizza.name"
-          @add-ingredient="handleAddIngredient"
+            :dough="pizzaStore.dough"
+            :sauce="pizzaStore.sauce"
+            :ingredients="pizzaStore.selectedIngredients"
+            :size="pizzaStore.size"
+            :modelValue="pizzaStore.name"
+            @update:modelValue="pizzaStore.setName"
+            @add-ingredient="handleDropIngredient"
          />
       </div>
 
@@ -55,13 +56,6 @@
 
 
 <script setup>
-import { computed, reactive } from 'vue';
-import {
-  normalizeDough,
-  normalizeIngredients,
-  normalizeSauces,
-  normalizeSize,
-} from "@/common/helpers/normalize";
 import { usePizzaStore } from '@/stores/pizza';
 import { useDataStore  } from '@/stores/data';
 
@@ -74,56 +68,18 @@ import IngredientsSelector  from "@/common/components/IngredientsSelector.vue";
 import SizeSelector from "@/common/components/SizeSelector.vue";
 import PizzaDisplay from "@/common/components/PizzaDisplay.vue";
 
-import doughJSON from "@/mocks/dough.json";
-import ingredientsJSON from "@/mocks/ingredients.json";
-import saucesJSON from "@/mocks/sauces.json";
-import sizesJSON from "@/mocks/sizes.json";
-
-const doughItems = doughJSON.map(normalizeDough);
-const ingredientItems = ingredientsJSON.map(normalizeIngredients);
-const sauceItems = saucesJSON.map(normalizeSauces);
-const sizeItems = sizesJSON.map(normalizeSize);
-
-const pizza = reactive({
-  name: "",
-  dough: doughItems[0],
-  size: sizeItems[0],
-  sauce: sauceItems[0],
-  ingredients: ingredientItems.reduce((acc, item) => {
-    acc[item.id] = {
-      ingredient: item,
-      count: 0
-    };
-    return acc;
-  }, {})
-});
-
-// Вычисляемое свойство для отображения выбранных ингредиентов
-const selectedIngredients = computed(() => {
-  return Object.values(pizza.ingredients)
-    .filter(item => item.count > 0)
-    .map(item => ({
-      ...item.ingredient,
-      quantity: item.count
-    }));
-});
 
 const handleIngredientChange = (ingredient, newCount) => {
-  // Получаем текущее количество из хранилища
-  const currentCount = pizzaStore.ingredients[ingredient.id]?.count || 0;
-  
   // Проверяем максимальное значение
   if (newCount > 3) {
     return; // Не обновляем, если превысили лимит
   }
-  
+
   pizzaStore.setIngredient(ingredient.id, newCount);
 };
 
-const handleAddIngredient = (ingredient) => {
-  if (pizza.ingredients[ingredient.id].count < 3) {
-    pizza.ingredients[ingredient.id].count++;
-  }
+const handleDropIngredient = (ingredient) => {
+  pizzaStore.addIngredient(ingredient); // Используем action из хранилища
 };
 
 

@@ -2,9 +2,9 @@
   <div class="content__pizza">
     <label class="input">
       <span class="visually-hidden">Название пиццы</span>
-      <input 
-        type="text" 
-        name="pizza_name" 
+      <input
+        type="text"
+        name="pizza_name"
         placeholder="Введите название пиццы"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
@@ -12,8 +12,8 @@
     </label>
     <div class="content__constructor">
       <AppDrop @drop="onDropIngredient">
-        <div 
-          class="pizza" 
+        <div
+          class="pizza"
           :class="`pizza--foundation--${dough?.value}-${sauce?.value}`"
         >
           <div class="pizza__wrapper">
@@ -36,9 +36,10 @@
     <div class="content__result">
       <p>Итого: {{ totalPrice }} ₽</p>
       <button
-        type="button"
-        class="button"
-        :disabled="!isFormValid"
+          type="button"
+          class="button"
+          @click="addToCart"
+          :disabled="!pizzaStore.isPizzaValid"
       >
         Готовьте!
       </button>
@@ -47,43 +48,45 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import AppDrop from "@/common/components/AppDrop.vue";
+import {usePizzaStore} from "@/stores/pizza";
+import { useCartStore  } from '@/stores/cart';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
-  dough: {
-    type: Object
-  },
-  sauce: {
-    type: Object
-  },
-  size: {
-    type: Object
-  },
-  ingredients: {
-    type: Array
-  },
-  modelValue: {
-    type: String
-  }
+  dough: Object,
+  sauce: Object,
+  size: Object,
+  ingredients: Array,
+  modelValue: String
 });
 
+const pizzaStore = usePizzaStore(); // Используем хранилище напрямую для логики
+const cartStore = useCartStore();
+const router = useRouter();
+
+const addToCart = () => {
+  if (!pizzaStore.isPizzaValid) return;
+
+  // Добавляем пиццу в корзину
+  cartStore.addPizza({
+    ...pizzaStore.$state,
+    id: Date.now(), // Уникальный ID
+    totalPrice: pizzaStore.totalPrice
+  });
+
+  // Очищаем конструктор (но можно закомментировать, если нужно сохранять)
+  pizzaStore.$reset();
+
+  // Переходим в корзину
+  router.push('/cart');
+};
+
+
+// Общая цена (переносим логику в хранилище)
 const totalPrice = computed(() => {
-  if (!props.size) return 0;
-  
-  // Сумма ингредиентов
-  const ingredientsSum = props.ingredients.reduce(
-    (sum, ing) => sum + (ing.price * ing.quantity),
-    0
-  );
-  
-  // Берем цены напрямую из объектов
-  return props.size.multiplier * (props.dough.price + props.sauce.price + ingredientsSum);
-});
-
-// Проверка валидности формы
-const isFormValid = computed(() => {
-  return props.modelValue.trim() !== '' && totalPrice.value > 0;
+  return pizzaStore.totalPrice;
 });
 
 const emit = defineEmits(['add-ingredient']);
