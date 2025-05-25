@@ -78,7 +78,6 @@ const ingredientsList = computed(() => {
 });
 
 const getImage = (image) => {
-  console.log('image_cart', image);
   return new URL(`../../assets/img/${image}`, import.meta.url).href;
 };
 

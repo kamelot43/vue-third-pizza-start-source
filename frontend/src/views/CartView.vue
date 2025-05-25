@@ -69,6 +69,7 @@
         </button>
       </div>
     </section>
+    <Popup v-if="popup.isVisible"/>
   </form>
 </template>
 
@@ -76,16 +77,19 @@
 import { useDataStore  } from '@/stores/data';
 import { useCartStore  } from '@/stores/cart';
 import { useOrdersStore  } from '@/stores/orders';
+import { usePopupStore } from '@/stores/popup';
 import { useRouter } from "vue-router";
 import { computed } from 'vue';
 import PizzaCartItem from '@/common/components/PizzaCartItem.vue';
 import MiscItem from '@/common//components/MiscItem.vue';
 import OrderForm from '@/common//components/OrderForm.vue';
+import Popup from '@/common/components/Popup.vue';
 
 const router = useRouter();
 const cart = useCartStore();
 const data = useDataStore();
 const orders = useOrdersStore();
+const popup = usePopupStore();
 
 // Получаем количество дополнительных товаров
 const getMiscQuantity = (id) => {
@@ -119,7 +123,7 @@ const submitOrder = () => {
 
     orders.addOrder(orderData);
     cart.$reset();
-    router.push('user/orders');
+    popup.show();
   } catch (error) {
     alert('Ошибка при оформлении заказа');
   }

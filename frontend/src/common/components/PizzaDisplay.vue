@@ -50,7 +50,7 @@
 <script setup>
 import { computed } from 'vue';
 import AppDrop from "@/common/components/AppDrop.vue";
-import {usePizzaStore} from "@/stores/pizza";
+import { usePizzaStore } from "@/stores/pizza";
 import { useCartStore  } from '@/stores/cart';
 import { useRouter } from 'vue-router';
 
