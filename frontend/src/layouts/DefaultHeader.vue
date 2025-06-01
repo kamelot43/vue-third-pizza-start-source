@@ -11,7 +11,7 @@
       </router-link>
     </div>
     <div class="header__cart">
-      <router-link :to="{ name: 'cart' }">0 ₽</router-link>
+      <router-link :to="{ name: 'cart' }">{{ formattedTotal }} ₽</router-link>
     </div>
     <div class="header__user">
       <router-link :to="{ name: 'profile' }">
@@ -40,7 +40,17 @@
   </header>
 </template>
 
+<script setup>
+import { computed } from 'vue';
+import { useCartStore} from "../stores/cart";
 
+const cartStore = useCartStore();
+// Форматируем сумму для отображения
+const formattedTotal = computed(() => {
+  return cartStore.total.toLocaleString('ru-RU');
+});
+
+</script>
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds";
 

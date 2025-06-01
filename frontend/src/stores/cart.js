@@ -105,16 +105,6 @@ export const useCartStore = defineStore("cart", {
     getMiscItem(itemId) {
       return useDataStore().misc.find(m => m.id === itemId);
     },
-
-    setDeliveryType(type) {
-      this.deliveryType = type;
-      if (type !== 'existing') this.selectedAddressId = null;
-    },
-
-    selectAddress(id) {
-      this.selectedAddressId = id;
-      this.deliveryType = 'existing';
-    }
   },
 
   getters: {
