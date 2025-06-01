@@ -91,6 +91,7 @@ const data = useDataStore();
 const orders = useOrdersStore();
 const popup = usePopupStore();
 
+
 // Получаем количество дополнительных товаров
 const getMiscQuantity = (id) => {
   return cart.misc.find(m => m.id === id)?.quantity || 0;
