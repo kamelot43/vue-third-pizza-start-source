@@ -7,8 +7,15 @@ export const useProfileStore = defineStore("profile", {
   }),
 
   actions: {
-    addAddress(address) {
-      this.addresses.push({ ...address, id: Date.now() });
+    addAddress(addressData) {
+      this.addresses.push({
+        id: Date.now(),
+        name: addressData.name, // Используем введенное пользователем имя
+        street: addressData.street,
+        building: addressData.building,
+        apartment: addressData.apartment,
+        comment: addressData.comment
+      });
       this.saveToLocalStorage();
     },
 
@@ -18,6 +25,10 @@ export const useProfileStore = defineStore("profile", {
         this.addresses.splice(index, 1, updatedAddress);
         this.saveToLocalStorage();
       }
+    },
+
+    getAddressById(id) {
+      return this.addresses.find(addr => addr.id === id);
     },
 
     deleteAddress(addressId) {

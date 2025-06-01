@@ -127,6 +127,13 @@
         >
           Отмена
         </button>
+        <button
+            type="button"
+            class="button button--transparent"
+            @click="() => deleteAddress(editingAddress.id)"
+        >
+            Удалить
+        </button>
         <button type="submit" class="button">
           {{ editingAddress.id ? 'Сохранить' : 'Добавить' }}
         </button>
@@ -172,6 +179,11 @@ const addNewAddress = () => {
 
 const cancelEditing = () => {
   profile.cancelEditing();
+  showForm.value = false;
+};
+
+const deleteAddress = (addressId) => {
+  profile.deleteAddress(addressId);
   showForm.value = false;
 };
 

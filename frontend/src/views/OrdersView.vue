@@ -114,7 +114,7 @@
 
   const formatAddress = (address) => {
     return `${address.street}, д. ${address.building}${
-        address.flat ? `, кв. ${address.flat}` : ''
+        address.apartment ? `, кв. ${address.apartment}` : ''
     }`;
   };
 

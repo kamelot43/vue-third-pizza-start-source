@@ -5,10 +5,13 @@ import { useDataStore } from "@/stores/data";
 export const useCartStore = defineStore("cart", {
   state: () => ({
     phone: "",
+    deliveryType: 'pickup', // 'pickup' | 'new' | 'existing'
     address: {
+      id: null,
+      name: '',
       street: "",
       building: "",
-      flat: "",
+      apartment: "",
       comment: "",
     },
     pizzas: [],
@@ -101,6 +104,16 @@ export const useCartStore = defineStore("cart", {
 
     getMiscItem(itemId) {
       return useDataStore().misc.find(m => m.id === itemId);
+    },
+
+    setDeliveryType(type) {
+      this.deliveryType = type;
+      if (type !== 'existing') this.selectedAddressId = null;
+    },
+
+    selectAddress(id) {
+      this.selectedAddressId = id;
+      this.deliveryType = 'existing';
     }
   },
 
