@@ -25,8 +25,14 @@ export class ApiService {
 
   async _request(method, url, payload = null) {
     try {
-      const config = payload ? { data: payload } : {};
-      const response = await method(url, config);
+         let response;
+         if (payload !== null) {
+             // для POST/PUT: метод принимает (url, data, config?)
+             response = await method(url, payload);
+         } else {
+             // для GET/DELETE: метод принимает (url)
+             response = await method(url);
+         }
       return {
         __state: "success",
         ...response,

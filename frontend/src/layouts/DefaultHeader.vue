@@ -33,8 +33,15 @@
         </picture>
         <span>Василий Ложкин</span>
       </router-link>
-      <router-link :to="{ name: 'home' }" class="header__logout">
+      <div
+          v-if="authStore.isAuthenticated"
+          class="header__logout"
+          @click="logout"
+      >
         <span>Выйти</span>
+      </div>
+      <router-link v-else :to="{ name: 'login' }" class="header__logout">
+        <span>Войти</span>
       </router-link>
     </div>
   </header>
@@ -42,9 +49,19 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
 import { useCartStore} from "../stores/cart";
 
+const authStore = useAuthStore();
 const cartStore = useCartStore();
+const router = useRouter();
+
+const logout = async () => {
+  await authStore.logout();
+  await router.replace({ name: "login" });
+};
+
 // Форматируем сумму для отображения
 const formattedTotal = computed(() => {
   return cartStore.total.toLocaleString('ru-RU');
