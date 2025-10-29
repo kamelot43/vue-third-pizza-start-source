@@ -8,13 +8,13 @@
         <source
           type="image/webp"
           srcset="
-            @/assets/img/users/user5@2x.webp 1x,
-            @/assets/img/users/user5@4x.webp 2x
+            /api/public/img/users/user5@2x.webp 1x,
+            /api/public/img/users/user5@4x.webp 2x
           "
         />
         <img
-          src="@/assets/img/users/user5@2x.jpg"
-          srcset="@/assets/img/users/user5@4x.jpg"
+          src="/api/public/img/users/user5@2x.jpg"
+          srcset="/api/public/img/users/user5@4x.jpg"
           alt="Василий Ложкин"
           width="72"
           height="72"
@@ -100,7 +100,7 @@
           <label class="input">
             <span>Квартира</span>
             <input
-                v-model="editingAddress.apartment"
+                v-model="editingAddress.flat"
                 type="text"
                 placeholder="Номер квартиры"
             />
@@ -171,7 +171,7 @@ const addNewAddress = () => {
     name: '',
     street: '',
     building: '',
-    apartment: '',
+    flat: '',
     comment: ''
   });
   showForm.value = true;
@@ -211,8 +211,8 @@ const handleSubmit = () => {
 // Форматирование адреса для отображения
 const formatAddress = (address) => {
   let result = `${address.street}, д. ${address.building}`;
-  if (address.apartment) {
-    result += `, кв. ${address.apartment}`;
+  if (address.flat) {
+    result += `, кв. ${address.flat}`;
   }
   return result;
 };
@@ -352,7 +352,7 @@ const formatAddress = (address) => {
     border-radius: 50%;
     outline: none;
     background-color: $white;
-    background-image: url("@/assets/img/edit.svg");
+    background-image: url("/api/public/img/edit.svg");
     background-repeat: no-repeat;
     background-position: center;
 

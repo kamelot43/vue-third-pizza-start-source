@@ -17,7 +17,7 @@
               :checked="doughType.id === modelValue?.id"
               @change="$emit('update:modelValue', doughType)"
           />
-          <img :src="getImage(doughType.image)" :alt="doughType.name" />
+          <img :src="getPublicImage(doughType.image)" :alt="doughType.name" />
           <b>{{ doughType.name }}</b>
           <span>{{ doughType.description }}</span>
         </label>
@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { watch } from 'vue';
+import { getPublicImage } from "@/common/helpers/publicImage";
 
 const props = defineProps({
   doughItems: {
@@ -40,10 +40,6 @@ const props = defineProps({
 })
 
 defineEmits(['update:modelValue']);
-
-const getImage = (image) => {
-  return new URL(`../../assets/img/${image}`, import.meta.url).href;
-};
 
 </script>
 

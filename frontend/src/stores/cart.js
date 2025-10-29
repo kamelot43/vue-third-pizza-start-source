@@ -1,17 +1,19 @@
 import { defineStore } from "pinia";
 import { usePizzaStore } from "@/stores/pizza";
 import { useDataStore } from "@/stores/data";
+import { useAuthStore } from "./auth";
+import resources from "@/services/resources";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
     phone: "",
-    deliveryType: 'pickup', // 'pickup' | 'new' | 'existing'
+    // deliveryType: 'pickup', // 'pickup' | 'new' | 'existing'
     address: {
       id: null,
       name: '',
       street: "",
       building: "",
-      apartment: "",
+      flat: "",
       comment: "",
     },
     pizzas: [],
@@ -104,6 +106,22 @@ export const useCartStore = defineStore("cart", {
 
     getMiscItem(itemId) {
       return useDataStore().misc.find(m => m.id === itemId);
+    },
+
+    async publishOrder() {
+      const authStore = useAuthStore();
+      // Собираем payload
+      const payload = {
+        userId: authStore.user?.id ?? null,
+        phone: this.phone,
+        address: this.address,
+        pizzas: this.pizzas,
+        misc: this.misc,
+      };
+      // Отправляем запрос
+      const res = await resources.order.createOrder(payload);
+      // Вернём результат вызова наружу (можно дальше обрабатывать __state и data)
+      return res;
     },
   },
 

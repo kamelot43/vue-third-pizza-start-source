@@ -120,7 +120,7 @@ const submitOrder = () => {
     // Создаем глубокую копию данных корзины
     const orderData = JSON.parse(JSON.stringify(cart.$state));
     // Пересчитываем total перед сохранением
-    orderData.total = cart.total;
+    // orderData.total = cart.total;
 
     orders.addOrder(orderData);
     cart.$reset();

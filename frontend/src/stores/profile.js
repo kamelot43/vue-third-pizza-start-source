@@ -13,7 +13,7 @@ export const useProfileStore = defineStore("profile", {
         name: addressData.name, // Используем введенное пользователем имя
         street: addressData.street,
         building: addressData.building,
-        apartment: addressData.apartment,
+        flat: addressData.flat,
         comment: addressData.comment
       });
       this.saveToLocalStorage();

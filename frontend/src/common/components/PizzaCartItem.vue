@@ -2,7 +2,7 @@
   <li class="cart-list__item">
     <div class="product cart-list__product">
       <img
-          :src="getImage('product.svg')"
+          :src="getPublicImage('/public/img/product.svg')"
           class="product__img"
           width="56"
           height="56"
@@ -60,6 +60,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { getPublicImage } from "@/common/helpers/publicImage";
 
 const props = defineProps({
   pizza: {
@@ -76,10 +77,6 @@ const ingredientsList = computed(() => {
       .map(i => i.name)             // Прямой доступ к свойству name
       .join(', ');
 });
-
-const getImage = (image) => {
-  return new URL(`../../assets/img/${image}`, import.meta.url).href;
-};
 
 const updateQuantity = (delta) => {
   const newValue = Math.max(0, props.pizza.quantity + delta);

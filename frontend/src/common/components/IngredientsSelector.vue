@@ -7,12 +7,12 @@
           class="ingredients__item"
           :key="ingredient.id"
       >
-        <AppDrag 
-          :transferData="ingredient" 
+        <AppDrag
+          :transferData="ingredient"
           :draggable="canDrag(ingredient)"
         >
         <span class="filling" :class="`filling--${ingredient.name}`" style="display: inline-block;">
-          <img :src="getImage(ingredient.image)" :alt="ingredient.name" draggable="false">
+          <img :src="getPublicImage(ingredient.image)" :alt="ingredient.name" draggable="false">
           {{ ingredient.name }}
         </span>
         </AppDrag>
@@ -33,6 +33,7 @@
 import {defineProps} from "vue";
 import AppDrag from "@/common/components/AppDrag.vue";
 import AppCounter from "@/common/components/AppCounter.vue";
+import { getPublicImage } from "@/common/helpers/publicImage";
 
 const props = defineProps({
   ingredientItems: {
@@ -59,11 +60,6 @@ const canDrag = (ingredient) => {
   return getCount(ingredient.id) < 3;
 };
 
-
-const getImage = (image) => {
-  const [folder, file] = image.split('/');
-  return new URL(`../../assets/img/${folder}/${file}`, import.meta.url).href;
-};
 </script>
 
 <style scoped>

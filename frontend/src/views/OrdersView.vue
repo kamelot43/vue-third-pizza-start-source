@@ -49,7 +49,7 @@
       >
         <div class="product">
           <img
-              :src="getImage('product.svg')"
+              :src="getPublicImage('/public/img/product.svg')"
               class="product__img"
               width="56"
               height="56"
@@ -78,7 +78,7 @@
           :key="item.id"
       >
         <img
-            :src="getImageSvg(item.image)"
+            :src="getPublicImage(item.image)"
             width="20"
             height="30"
             :alt="item.name"
@@ -97,9 +97,10 @@
   </template>
 
   <script setup>
-  import { computed } from 'vue';
+  import { computed, onMounted } from 'vue';
   import { useOrdersStore  } from '@/stores/orders';
   import { useRouter } from "vue-router";
+  import { getPublicImage } from "@/common/helpers/publicImage";
 
   const ordersStore = useOrdersStore();
   const orders = computed(() => ordersStore.orders);
@@ -114,7 +115,7 @@
 
   const formatAddress = (address) => {
     return `${address.street}, д. ${address.building}${
-        address.apartment ? `, кв. ${address.apartment}` : ''
+        address.flat ? `, кв. ${address.flat}` : ''
     }`;
   };
 
@@ -127,15 +128,9 @@
     router.push('/cart');
   };
 
-  const getImage = (image) => {
-    console.log('image', image);
-    return new URL(`../assets/img/${image}`, import.meta.url).href;
-  };
-
-  const getImageSvg = (image) => {
-    console.log('imageSrc', image);
-    return new URL(`../assets/img/${image}.svg`, import.meta.url).href;
-  };
+  onMounted(async () => {
+    await ordersStore.loadOrders();
+  });
   </script>
 
   <style lang="scss" scoped>

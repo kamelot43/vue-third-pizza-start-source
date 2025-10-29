@@ -2,7 +2,7 @@
   <li class="additional-list__item sheet">
     <p class="additional-list__description">
       <img
-          :src="getImage(item.image)"
+          :src="getPublicImage(item.image)"
           width="39"
           height="60"
           :alt="item.name"
@@ -45,6 +45,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { getPublicImage } from "@/common/helpers/publicImage";
 
 const props = defineProps({
   item: {
@@ -58,10 +59,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:quantity']);
-
-const getImage = (image) => {
-  return new URL(`../../assets/img/${image}.svg`, import.meta.url).href;
-};
 
 const updateQuantity = (delta) => {
   const newValue = Math.max(0, props.quantity + delta);

@@ -69,8 +69,8 @@
           <span>Квартира</span>
           <input
               type="text"
-              :value="address.apartment"
-              @input="$emit('update:address', { ...address, apartment: $event.target.value })"
+              :value="address.flat"
+              @input="$emit('update:address', { ...address, flat: $event.target.value })"
               :disabled="deliveryType === 'existing'"
           >
         </label>
@@ -138,7 +138,7 @@ const handleDeliveryChange = (event) => {
     emit('update:address', {
       street: '',
       building: '',
-      apartment: '',
+      flat: '',
       comment: '',
       name: ''
     });

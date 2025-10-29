@@ -141,7 +141,7 @@
    padding-bottom: 32px;
    padding-left: 32px;
 
-   background: $white url("@/assets/img/popup.svg") no-repeat center top;
+   background: $white url("/api/public/img/popup.svg") no-repeat center top;
    box-shadow: $shadow-light;
 
    button {
