@@ -1,22 +1,22 @@
 <template>
   <transition name="popup">
-    <div
-        v-if="popup.isVisible"
-        class="popup-overlay"
-        @click.self="close"
-    >
+    <div v-if="popup.isVisible" class="popup-overlay" @click.self="close">
       <div class="popup">
-        <router-link :to="{ name: redirectRouteName }" class="close">
+        <!-- Крестик -->
+        <button type="button" class="close" @click="confirm">
           <span class="visually-hidden">Закрыть попап</span>
-        </router-link>
+        </button>
+
         <div class="popup__title">
           <h2 class="title">Спасибо за заказ</h2>
         </div>
+
         <p>Мы начали готовить Ваш заказ, скоро привезём его вам ;)</p>
+
         <div class="popup__button">
-          <router-link :to="{ name: redirectRouteName }" class="button">
+          <button type="button" class="button" @click="confirm">
             Отлично, я жду!
-          </router-link>
+          </button>
         </div>
       </div>
     </div>
@@ -24,30 +24,28 @@
 </template>
 
 <script setup>
-
-import { usePopupStore  } from '@/stores/popup';
-import { useRouter } from 'vue-router';
-import {useAuthStore} from "../../stores/auth";
+import { usePopupStore } from "@/stores/popup";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 import { computed } from "vue";
 
 const authStore = useAuthStore();
-
 const router = useRouter();
 const popup = usePopupStore();
 
 const redirectRouteName = computed(() =>
-    authStore.isAuthenticated ? "orders" : "home"
+  authStore.isAuthenticated ? "orders" : "home",
 );
 
 const close = () => {
   popup.hide();
 };
 
+// закрываем попап и уходим на нужную страницу
 const confirm = () => {
   popup.hide();
-  router.push('/user/orders');
+  router.push({ name: redirectRouteName.value });
 };
-
 </script>
 
 <style lang="scss" scoped>
@@ -66,7 +64,6 @@ const confirm = () => {
   justify-content: center;
   align-items: center;
 }
-
 
 .popup {
   @include pf_center-all;
@@ -120,7 +117,9 @@ const confirm = () => {
 
 .popup-enter-active,
 .popup-leave-active {
-  transition: opacity 0.3s, transform 0.3s;
+  transition:
+    opacity 0.3s,
+    transform 0.3s;
 }
 
 .popup-enter-from,
@@ -130,7 +129,13 @@ const confirm = () => {
 }
 
 .popup__button {
+  // для старого варианта через <router-link>
   :deep(a) {
+    padding: 16px 32px;
+  }
+
+  // для текущего варианта с <button class="button">
+  .button {
     padding: 16px 32px;
   }
 }
@@ -156,6 +161,11 @@ const confirm = () => {
   color: $black;
   border-radius: 50%;
   outline: none;
+
+  /* 🔽 добавь вот это */
+  border: none;
+  background: transparent;
+  padding: 0;
 
   &::before,
   &::after {
@@ -202,5 +212,4 @@ const confirm = () => {
     }
   }
 }
-
 </style>

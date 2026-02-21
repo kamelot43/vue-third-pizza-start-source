@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia';
-import { useProfileStore } from './profile';
-import { useOrdersStore } from './orders';
-import JwtService from '@/services/jwt/jwt.service';
-import resources from '@/services/resources';
+import { defineStore } from "pinia";
+import { useProfileStore } from "./profile";
+import { useOrdersStore } from "./orders";
+import JwtService from "@/services/jwt/jwt.service";
+import resources from "@/services/resources";
 
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
     isLoading: false,
@@ -31,11 +31,12 @@ export const useAuthStore = defineStore('auth', {
       const res = await resources.auth.login(credentials);
       this.isLoading = false;
 
-      if (res.__state === 'success') {
+      if (res.__state === "success") {
         const token = res.data.token;
         JwtService.saveToken(token);
         resources.auth.setAuthHeader(token);
-        return 'success';
+        await this.whoami();
+        return "success";
       } else {
         this.error = res.data.message;
         return res.data.message;
@@ -45,8 +46,18 @@ export const useAuthStore = defineStore('auth', {
     async logout() {
       await resources.auth.logout();
       JwtService.destroyToken();
-      resources.auth.setAuthHeader('');
+      resources.auth.setAuthHeader("");
       this.user = null;
+      try {
+        const profileStore = useProfileStore();
+        const ordersStore = useOrdersStore();
+        profileStore.addresses = [];
+        ordersStore.orders = [];
+        profileStore.saveToLocalStorage?.();
+        ordersStore.saveToLocalStorage?.();
+      } catch (e) {
+        console.log("error", e);
+      }
     },
 
     /** Получить информацию о пользователе */
@@ -55,8 +66,8 @@ export const useAuthStore = defineStore('auth', {
       resources.auth.setAuthHeader(token);
 
       const res = await resources.auth.whoami();
-      if (res.__state !== 'success') {
-        throw new Error('Не удалось получить профиль пользователя');
+      if (res.__state !== "success") {
+        throw new Error("Не удалось получить профиль пользователя");
       }
       this.setUser(res.data);
     },
@@ -64,23 +75,22 @@ export const useAuthStore = defineStore('auth', {
     /** Параллельно загрузить адреса и заказы */
     async fetchProfileData() {
       const profileStore = useProfileStore();
-      const ordersStore  = useOrdersStore();
+      const ordersStore = useOrdersStore();
 
       const [addrRes, ordersRes] = await Promise.all([
         resources.address.getAddresses(),
         resources.order.getOrders(),
       ]);
 
-      if (addrRes.__state !== 'success') {
-        throw new Error('Не удалось загрузить адреса');
+      if (addrRes.__state !== "success") {
+        throw new Error("Не удалось загрузить адреса");
       }
-      if (ordersRes.__state !== 'success') {
-        throw new Error('Не удалось загрузить заказы');
+      if (ordersRes.__state !== "success") {
+        throw new Error("Не удалось загрузить заказы");
       }
 
       // Сохраняем в профиль-стор
-      profileStore.addresses = addrRes.data;
-      profileStore.saveToLocalStorage();
+      profileStore.setAddresses(addrRes.data);
 
       // Сохраняем в orders-стор
       ordersStore.orders = ordersRes.data;
@@ -96,7 +106,7 @@ export const useAuthStore = defineStore('auth', {
         await this.fetchUser();
         await this.fetchProfileData();
       } catch (e) {
-        console.error('Error in authStore.whoami:', e);
+        console.error("Error in authStore.whoami:", e);
         await this.logout();
         this.error = e.message;
       } finally {

@@ -4,16 +4,16 @@
     <label class="cart-form__select">
       <span class="cart-form__label">Получение заказа:</span>
       <select
-          class="select"
-          :value="deliveryType === 'existing' ? address.id : deliveryType"
-          @change="handleDeliveryChange"
+        class="select"
+        :value="selectValue"
+        @change="handleDeliveryChange"
       >
         <option value="pickup">Заберу сам</option>
         <option value="new">Новый адрес</option>
         <option
-            v-for="addr in profileStore.addresses"
-            :key="addr.id"
-            :value="addr.id"
+          v-for="addr in profileStore.addresses"
+          :key="addr.id"
+          :value="addr.id"
         >
           {{ addr.name }}
         </option>
@@ -24,12 +24,12 @@
     <label class="input input--big-label">
       <span>Контактный телефон:</span>
       <input
-          type="tel"
-          :value="phone"
-          @input="$emit('update:phone', $event.target.value)"
-          placeholder="+7 999 999-99-99"
-          required
-      >
+        type="tel"
+        :value="phone"
+        @input="phone = $event.target.value"
+        placeholder="+7 999 999-99-99"
+        required
+      />
     </label>
 
     <!-- Блок адреса -->
@@ -41,38 +41,38 @@
         <label class="input">
           <span>Улица*</span>
           <input
-              type="text"
-              :value="address.street"
-              @input="$emit('update:address', { ...address, street: $event.target.value })"
-              :disabled="deliveryType === 'existing'"
-              required
-          >
+            type="text"
+            :value="address.street"
+            @input="updateAddress('street', $event.target.value)"
+            placeholder="Введите название улицы"
+            :disabled="isExistingAddress"
+            required
+          />
         </label>
       </div>
-
-      <!-- Дом и квартира -->
       <div class="cart-form__input cart-form__input--small">
         <label class="input">
           <span>Дом*</span>
           <input
-              type="text"
-              :value="address.building"
-              @input="$emit('update:address', { ...address, building: $event.target.value })"
-              :disabled="deliveryType === 'existing'"
-              required
-          >
+            type="text"
+            :value="address.building"
+            @input="updateAddress('building', $event.target.value)"
+            placeholder="Номер дома"
+            :disabled="isExistingAddress"
+            required
+          />
         </label>
       </div>
-
       <div class="cart-form__input cart-form__input--small">
         <label class="input">
           <span>Квартира</span>
           <input
-              type="text"
-              :value="address.flat"
-              @input="$emit('update:address', { ...address, flat: $event.target.value })"
-              :disabled="deliveryType === 'existing'"
-          >
+            type="text"
+            :value="address.flat"
+            @input="updateAddress('flat', $event.target.value)"
+            placeholder="Номер квартиры"
+            :disabled="isExistingAddress"
+          />
         </label>
       </div>
     </div>
@@ -80,89 +80,111 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue';
-import { useProfileStore } from '@/stores/profile';
+import { computed } from "vue";
+import { useProfileStore } from "@/stores/profile";
+import { toRaw } from "vue";
 
 const profileStore = useProfileStore();
 
 const props = defineProps({
-  phone: String,
-  address: Object,
-  deliveryType: String
+  phone: {
+    type: String,
+    default: "",
+  },
+  address: {
+    type: Object,
+    default: () => ({}),
+  },
+  deliveryType: {
+    type: String,
+    default: "pickup", // pickup | new | existing
+  },
 });
 
 const emit = defineEmits([
-  'update:phone',
-  'update:address',
-  'update:deliveryType'
+  "update:phone",
+  "update:address",
+  "update:deliveryType",
 ]);
 
+// двусторонние биндинги
 const phone = computed({
   get: () => props.phone,
-  set: (value) => emit('update:phone', value)
+  set: (value) => emit("update:phone", value),
 });
 
 const deliveryType = computed({
   get: () => props.deliveryType,
-  set: (value) => emit('update:deliveryType', value)
+  set: (value) => emit("update:deliveryType", value),
 });
 
-// Новое состояние для выбора адреса
-const selectedAddressId = computed({
-  get: () => props.address?.id || null,
-  set: (id) => {
-    const selectedAddress = profileStore.addresses.find(addr => addr.id === id);
-    if (selectedAddress) {
-      emit('update:address', { ...selectedAddress });
-    }
+// текущий адрес
+const address = computed(() => props.address || {});
+
+// выбрано ли "существующий адрес"
+const isExistingAddress = computed(
+  () => deliveryType.value === "existing" && !!address.value.id,
+);
+
+// значение селекта
+const selectValue = computed(() => {
+  console.log("address", toRaw(address.value));
+  console.log("deliveryType", toRaw(deliveryType.value));
+  if (deliveryType.value === "existing" && address.value?.id) {
+    return address.value.id; // id существующего адреса
   }
+  return deliveryType.value; // 'pickup' или 'new'
 });
 
-// Опции для селекта
-const deliveryOptions = computed(() => [
-  { value: 'pickup', label: 'Заберу сам' },
-  { value: 'new', label: 'Новый адрес' },
-  ...profileStore.addresses.map(addr => ({
-    value: addr.id,
-    label: addr.name
-  }))
-]);
-
+// изменение значения селекта
 const handleDeliveryChange = (event) => {
   const value = event.target.value;
 
-  if (value === 'pickup') {
-    deliveryType.value = 'pickup';
-  } else if (value === 'new') {
-    deliveryType.value = 'new';
-    emit('update:address', {
-      street: '',
-      building: '',
-      flat: '',
-      comment: '',
-      name: ''
+  if (value === "pickup") {
+    deliveryType.value = "pickup";
+    emit("update:address", {
+      street: "",
+      building: "",
+      flat: "",
+      comment: "",
+      name: "",
+    });
+  } else if (value === "new") {
+    deliveryType.value = "new";
+    emit("update:address", {
+      street: "",
+      building: "",
+      flat: "",
+      comment: "",
+      name: "",
     });
   } else {
-    // Выбор существующего адреса
-    const selectedAddress = profileStore.getAddressById(Number(value));
+    const id = Number(value);
+    const selectedAddress = profileStore.addresses.find(
+      (addr) => addr.id === id,
+    );
+
     if (selectedAddress) {
-      deliveryType.value = 'existing';
-      emit('update:address', {
-        ...selectedAddress,
-        id: selectedAddress.id
-      });
+      deliveryType.value = "existing";
+      emit("update:address", { ...selectedAddress });
     }
   }
 };
 
+// обновление отдельного поля адреса
 const updateAddress = (field, value) => {
-  emit('update:address', { ...props.address, [field]: value });
+  emit("update:address", {
+    ...address.value,
+    [field]: value,
+  });
 };
 
-// Отслеживаем изменения адреса извне
-watch(() => props.address, (newAddress) => {
-  if (!newAddress.id) {
-    selectedAddressId.value = null;
+const formatAddress = (addr) => {
+  if (!addr) return "";
+  let res = `${addr.street}, д. ${addr.building}`;
+  if (addr.flat) {
+    res += `, кв. ${addr.flat}`;
   }
-}, { deep: true });
+  return res;
+};
 </script>

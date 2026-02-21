@@ -1,5 +1,5 @@
-// api.service.js
 import axios, { AxiosError } from "axios";
+import JwtService from "@/services/jwt/jwt.service";
 
 class ApiError extends Error {
   constructor(message, response) {
@@ -17,7 +17,7 @@ export class ApiService {
     if (e instanceof AxiosError) {
       return new ApiError(
         e.response.data?.error?.message ?? e.message,
-        e.response
+        e.response,
       );
     }
     return new ApiError(e.message, e.response);
@@ -25,14 +25,17 @@ export class ApiService {
 
   async _request(method, url, payload = null) {
     try {
-         let response;
-         if (payload !== null) {
-             // для POST/PUT: метод принимает (url, data, config?)
-             response = await method(url, payload);
-         } else {
-             // для GET/DELETE: метод принимает (url)
-             response = await method(url);
-         }
+      const token = JwtService.getToken();
+      const cfg = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : undefined;
+
+      let response;
+      if (payload !== null) {
+        response = await method(url, payload, cfg);
+      } else {
+        response = await method(url, cfg);
+      }
       return {
         __state: "success",
         ...response,

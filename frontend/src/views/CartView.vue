@@ -14,11 +14,11 @@
         <!-- Список пицц -->
         <ul v-else class="cart-list sheet">
           <PizzaCartItem
-              v-for="pizza in cart.pizzas"
-              :key="pizza.id"
-              :pizza="pizza"
-              @update:quantity="updatePizzaQuantity(pizza.id, $event)"
-              @edit="editPizza(pizza.id)"
+            v-for="pizza in cart.pizzas"
+            :key="pizza.id"
+            :pizza="pizza"
+            @update:quantity="updatePizzaQuantity(pizza.id, $event)"
+            @edit="editPizza(pizza.id)"
           />
         </ul>
 
@@ -26,11 +26,11 @@
         <div class="cart__additional">
           <ul class="additional-list">
             <MiscItem
-                v-for="item in data.misc"
-                :key="item.id"
-                :item="item"
-                :quantity="getMiscQuantity(item.id)"
-                @update:quantity="cart.updateMisc(item.id, $event)"
+              v-for="item in data.misc"
+              :key="item.id"
+              :item="item"
+              :quantity="getMiscQuantity(item.id)"
+              @update:quantity="cart.updateMisc(item.id, $event)"
             />
           </ul>
         </div>
@@ -38,9 +38,9 @@
         <!-- Форма заказа -->
         <div class="cart__form">
           <OrderForm
-              v-model:phone="cart.phone"
-              v-model:address="cart.address"
-              v-model:deliveryType="cart.deliveryType"
+            v-model:phone="cart.phone"
+            v-model:address="cart.address"
+            v-model:deliveryType="cart.deliveryType"
           />
         </div>
       </div>
@@ -48,53 +48,55 @@
     <!-- Подвал с итогами -->
     <section class="footer">
       <div class="footer__more">
-        <router-link
-            to="/"
-            class="button button--border button--arrow"
-        >
+        <router-link to="/" class="button button--border button--arrow">
           Хочу еще одну
         </router-link>
       </div>
-      <p class="footer__text">Перейти к конструктору<br>чтоб собрать ещё одну пиццу</p>
+      <p class="footer__text">
+        Перейти к конструктору<br />чтоб собрать ещё одну пиццу
+      </p>
       <div class="footer__price">
         <b>Итого: {{ cart.total }} ₽</b>
       </div>
       <div class="footer__submit">
-        <button
-            type="submit"
-            class="button"
-            :disabled="!isFormValid"
-        >
+        <button type="submit" class="button" :disabled="!isFormValid">
           Оформить заказ
         </button>
       </div>
     </section>
-    <Popup v-if="popup.isVisible"/>
+    <Popup v-if="popup.isVisible" />
   </form>
 </template>
 
 <script setup>
-import { useDataStore  } from '@/stores/data';
-import { useCartStore  } from '@/stores/cart';
-import { useOrdersStore  } from '@/stores/orders';
-import { usePopupStore } from '@/stores/popup';
+import { useDataStore } from "@/stores/data";
+import { useCartStore } from "@/stores/cart";
+import { useOrdersStore } from "@/stores/orders";
+import { usePopupStore } from "@/stores/popup";
+import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
-import { computed } from 'vue';
-import PizzaCartItem from '@/common/components/PizzaCartItem.vue';
-import MiscItem from '@/common//components/MiscItem.vue';
-import OrderForm from '@/common//components/OrderForm.vue';
-import Popup from '@/common/components/Popup.vue';
+import { computed, onMounted } from "vue";
+import PizzaCartItem from "@/common/components/PizzaCartItem.vue";
+import MiscItem from "@/common//components/MiscItem.vue";
+import OrderForm from "@/common//components/OrderForm.vue";
+import Popup from "@/common/components/Popup.vue";
 
 const router = useRouter();
+const auth = useAuthStore();
 const cart = useCartStore();
 const data = useDataStore();
 const orders = useOrdersStore();
 const popup = usePopupStore();
 
+onMounted(() => {
+  if (auth.isAuthenticated && auth.user?.phone && !cart.phone) {
+    cart.phone = auth.user.phone;
+  }
+});
 
 // Получаем количество дополнительных товаров
 const getMiscQuantity = (id) => {
-  return cart.misc.find(m => m.id === id)?.quantity || 0;
+  return cart.misc.find((m) => m.id === id)?.quantity || 0;
 };
 
 // Обновление количества пицц
@@ -109,27 +111,31 @@ const editPizza = (id) => {
 
 // Проверка валидности формы
 const isFormValid = computed(() => {
-  return cart.phone.length >= 10 &&
-      (cart.deliveryType === 'pickup' ||
-          (cart.address.street && cart.address.building));
+  const hasPizza = cart.pizzas.length > 0;
+  const hasPhone = cart.phone.trim().length >= 10;
+  const hasAddress =
+    cart.deliveryType === "pickup" ||
+    (cart.address.street && cart.address.building);
+
+  return hasPizza && hasPhone && hasAddress;
 });
 
-// Отправка заказа
-const submitOrder = () => {
+const submitOrder = async () => {
   try {
-    // Создаем глубокую копию данных корзины
-    const orderData = JSON.parse(JSON.stringify(cart.$state));
-    // Пересчитываем total перед сохранением
-    // orderData.total = cart.total;
+    const res = await orders.submitCart(cart, auth);
 
-    orders.addOrder(orderData);
+    if (!res || res.__state !== "success") {
+      const msg = res?.data?.message || "Не удалось оформить заказ";
+      throw new Error(msg);
+    }
+
     cart.$reset();
     popup.show();
-  } catch (error) {
-    alert('Ошибка при оформлении заказа');
+  } catch (e) {
+    console.error(e);
+    alert(e.message || "Ошибка при оформлении заказа");
   }
 };
-
 </script>
 
 <style lang="scss">

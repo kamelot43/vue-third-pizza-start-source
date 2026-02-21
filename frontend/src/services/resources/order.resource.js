@@ -1,8 +1,9 @@
-import {ApiService} from "../api/api.service";
+import { ApiService } from "../api/api.service";
 
 export class OrderResource extends ApiService {
   constructor() {
-    super("/api/orders");
+    const base = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    super(`${base}/orders`);
   }
 
   getOrders() {

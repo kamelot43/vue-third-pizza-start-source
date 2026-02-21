@@ -1,16 +1,16 @@
 import { defineStore } from "pinia";
 import { usePizzaStore } from "@/stores/pizza";
 import { useDataStore } from "@/stores/data";
-import { useAuthStore } from "./auth";
-import resources from "@/services/resources";
+import { useProfileStore } from "@/stores/profile";
+import { toRaw } from "vue";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
     phone: "",
-    // deliveryType: 'pickup', // 'pickup' | 'new' | 'existing'
+    deliveryType: "pickup",
     address: {
       id: null,
-      name: '',
+      name: "",
       street: "",
       building: "",
       flat: "",
@@ -26,27 +26,25 @@ export const useCartStore = defineStore("cart", {
 
       // Преобразование формата ингредиентов
       const formattedIngredients = Object.values(pizzaStore.ingredients)
-        .filter(item => item.count > 0)
+        .filter((item) => item.count > 0)
         .map(({ ingredient, count }) => ({
-          ...ingredient,       // Распространяем свойства ингредиента
-          quantity: count      // Добавляем количество
+          ...ingredient,
+          quantity: count,
         }));
 
       this.pizzas.push({
         id: Date.now(),
-        // Сохраняем оригинальные данные
         ...pizzaStore.$state,
-        // Перезаписываем ingredients совместимым форматом
         ingredients: formattedIngredients,
         totalPrice: pizzaStore.totalPrice,
-        quantity: 1
+        quantity: 1,
       });
 
       pizzaStore.$reset();
     },
 
     editPizza(pizzaId) {
-      const pizza = this.pizzas.find(p => p.id === pizzaId);
+      const pizza = this.pizzas.find((p) => p.id === pizzaId);
       if (!pizza) return;
 
       const pizzaStore = usePizzaStore();
@@ -54,23 +52,58 @@ export const useCartStore = defineStore("cart", {
       // Восстанавливаем состояние конструктора
       pizzaStore.$patch({
         ...pizza,
-        ingredients: this.convertToIngredientsObject(pizza.ingredients)
+        ingredients: this.convertToIngredientsObject(pizza.ingredients),
       });
 
       // Удаляем пиццу из корзины
-      this.pizzas = this.pizzas.filter(p => p.id !== pizzaId);
+      this.pizzas = this.pizzas.filter((p) => p.id !== pizzaId);
     },
 
-    restoreOrder(orderData) {
+    restoreOrder(order) {
+      const profileStore = useProfileStore();
+
       this.$reset();
 
-      this.pizzas = orderData.pizzas.map(pizza => ({
-        ...pizza,
-        ingredients: [...pizza.ingredients]
-      }));
-      this.misc = [...orderData.misc];
-      this.phone = orderData.phone;
-      this.address = { ...orderData.address };
+      this.pizzas = order.pizzas.map((p) => ({ ...p }));
+      this.misc = order.misc.map((m) => ({ ...m }));
+      this.phone = order.phone || "";
+
+      if (!order.address) {
+        this.deliveryType = "pickup";
+        this.address = {
+          id: null,
+          name: "",
+          street: "",
+          building: "",
+          flat: "",
+          comment: "",
+        };
+        return;
+      }
+
+      const addrId = Number(order.address.id);
+
+      // Пытаемся найти адрес среди сохранённых
+      const saved = profileStore.addresses.find((a) => Number(a.id) === addrId);
+
+      console.log("addrId", addrId);
+      console.log("saved", saved);
+      console.log("profileStore.addresses", toRaw(profileStore.addresses));
+
+      if (saved) {
+        this.deliveryType = "existing";
+        this.address = { ...saved };
+      } else {
+        this.deliveryType = "new";
+        this.address = {
+          id: null,
+          name: order.address.name || "",
+          street: order.address.street || "",
+          building: order.address.building || "",
+          flat: order.address.flat || "",
+          comment: order.address.comment || "",
+        };
+      }
     },
 
     convertToIngredientsObject(ingredientsArray) {
@@ -81,20 +114,20 @@ export const useCartStore = defineStore("cart", {
     },
 
     updateMisc(itemId, quantity) {
-      const item = this.misc.find(m => m.id === itemId);
+      const item = this.misc.find((m) => m.id === itemId);
       if (item) {
         item.quantity = Math.max(0, quantity);
       } else {
         this.misc.push({
           id: itemId,
           quantity: 1,
-          ...this.getMiscItem(itemId)
+          ...this.getMiscItem(itemId),
         });
       }
     },
 
     updatePizzaQuantity(pizzaId, newQuantity) {
-      const pizzaIndex = this.pizzas.findIndex(p => p.id === pizzaId);
+      const pizzaIndex = this.pizzas.findIndex((p) => p.id === pizzaId);
       if (pizzaIndex === -1) return;
 
       if (newQuantity <= 0) {
@@ -105,39 +138,23 @@ export const useCartStore = defineStore("cart", {
     },
 
     getMiscItem(itemId) {
-      return useDataStore().misc.find(m => m.id === itemId);
-    },
-
-    async publishOrder() {
-      const authStore = useAuthStore();
-      // Собираем payload
-      const payload = {
-        userId: authStore.user?.id ?? null,
-        phone: this.phone,
-        address: this.address,
-        pizzas: this.pizzas,
-        misc: this.misc,
-      };
-      // Отправляем запрос
-      const res = await resources.order.createOrder(payload);
-      // Вернём результат вызова наружу (можно дальше обрабатывать __state и data)
-      return res;
+      return useDataStore().misc.find((m) => m.id === itemId);
     },
   },
 
   getters: {
     total: (state) => {
       const pizzasSum = state.pizzas.reduce(
-        (sum, pizza) => sum + (pizza.totalPrice * pizza.quantity),
-        0
+        (sum, pizza) => sum + pizza.totalPrice * pizza.quantity,
+        0,
       );
 
       const miscSum = state.misc.reduce(
-        (sum, item) => sum + (item.price * item.quantity),
-        0
+        (sum, item) => sum + item.price * item.quantity,
+        0,
       );
 
       return pizzasSum + miscSum;
-    }
-  }
+    },
+  },
 });
