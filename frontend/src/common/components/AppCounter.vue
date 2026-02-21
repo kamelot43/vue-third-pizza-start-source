@@ -1,5 +1,5 @@
 <template>
-    <div :class="['counter', baseClass, modifier]">
+    <div :class="['counter', classProp, modifier]">
       <button
         type="button"
         class="counter__button counter__button--minus"
@@ -27,7 +27,8 @@
   </template>
   
   <script setup>
-  import { defineProps, defineEmits } from 'vue';
+  import { defineProps, defineEmits, computed } from 'vue';
+
   
   const props = defineProps({
     count: {
@@ -51,6 +52,8 @@
       default: ''
     }
   });
+
+  const classProp = computed(() => props.class);
   
   const emit = defineEmits(['update:count']);
   
