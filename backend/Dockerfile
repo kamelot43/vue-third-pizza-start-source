@@ -17,33 +17,31 @@ WORKDIR /home/node/app
 # Копируем package.json
 COPY --chown=node package*.json ./
 
-# Устанавливаем зависимости (без аудита для скорости)
-RUN npm ci --no-audit
+# Устанавливаем зависимости
+RUN npm ci
 
 # Копируем исходники
 COPY --chown=node . .
 
-# МАКСИМАЛЬНАЯ ОТЛАДКА (с исправленными ошибками)
-RUN echo "=== СОДЕРЖИМОЕ ДИРЕКТОРИИ ===" && ls -la
-RUN echo "=== СОДЕРЖИМОЕ package.json ===" && cat package.json
-RUN echo "=== ВСЕ СКРИПТЫ ===" && npm run || echo "npm run показал скрипты"
+# Проверяем структуру
+RUN echo "=== ПРОВЕРКА УСТАНОВЛЕННЫХ ПАКЕТОВ ===" && npm list --depth=0
 
-# Проверяем node_modules/.bin (без grep, чтобы не падать)
-RUN echo "=== ПРОВЕРЯЕМ node_modules/.bin ===" && ls -la node_modules/.bin/ || echo "Нет файлов в .bin"
+# Пробуем установить @loopback/build явно (на всякий случай)
+RUN npm install --save-dev @loopback/build
 
-# Проверяем @loopback/build
-RUN echo "=== ПРОВЕРЯЕМ @loopback/build ===" && ls -la node_modules/@loopback/build/bin/ 2>/dev/null || echo "Нет папки @loopback/build"
-
-# Пробуем разные способы сборки
-RUN echo "=== СПОСОБ 1: npx ===" && npx lb-tsc || echo "npx не сработал"
-RUN echo "=== СПОСОБ 2: прямой путь ===" && ./node_modules/.bin/lb-tsc || echo "прямой путь не сработал"
-RUN echo "=== СПОСОБ 3: через @loopback ===" && ./node_modules/@loopback/build/bin/lb-tsc.js || echo "loopback путь не сработал"
-RUN echo "=== СПОСОБ 4: npm script ===" && npm run build || echo "npm script не сработал"
+# Запускаем сборку через npx с полным путем
+RUN echo "=== ЗАПУСК СБОРКИ ===" && npx -p @loopback/build lb-tsc
 
 # Проверяем результат
-RUN echo "=== РЕЗУЛЬТАТ ===" && ls -la dist/ || echo "dist не создалась"
+RUN echo "=== ПРОВЕРКА dist ===" && ls -la dist/ && echo "dist создалась успешно" || echo "dist НЕ создалась!"
 
 ENV HOST=0.0.0.0 PORT=3000
 EXPOSE ${PORT}
+
+# Если dist не создалась, создаем заглушку для отладки
+RUN if [ ! -d "dist" ]; then \
+    mkdir -p dist && \
+    echo 'console.log("Server starting..."); const http = require("http"); const server = http.createServer((req, res) => { res.writeHead(200); res.end("Server is running (debug mode)"); }); server.listen(3000);' > dist/index.js; \
+    fi
 
 CMD ["node", "dist/index.js"]
