@@ -1,28 +1,35 @@
-# Check out https://hub.docker.com/_/node to select a new base image
 FROM node:20-slim
 
-# Set to a non-root built-in user `node`
-USER node
+# Устанавливаем необходимые пакеты
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-# Create app directory (with user `node`)
-RUN mkdir -p /home/node/app
+# Создаем директорию и даем права
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+
+USER node
 
 WORKDIR /home/node/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
+# Копируем package.json
 COPY --chown=node package*.json ./
 
-RUN npm ci
+# Устанавливаем зависимости (без аудита для скорости)
+RUN npm ci --no-audit
 
-# Bundle app source code
+# Копируем исходники
 COPY --chown=node . .
 
+# Собираем проект
 RUN npm run build
 
-# Bind to all network interfaces so that it can be mapped to the host OS
-ENV HOST=0.0.0.0 PORT=3000
+# Проверяем, что dist создалась
+RUN ls -la dist/
 
+ENV HOST=0.0.0.0 PORT=3000
 EXPOSE ${PORT}
-CMD [ "node", "dist/index.js" ]
+
+CMD ["node", "dist/index.js"]
