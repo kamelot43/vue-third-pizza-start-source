@@ -21,6 +21,23 @@ export {ApplicationConfig};
 
 export class Application extends BootMixin(ServiceMixin(RepositoryMixin(RestApplication))) {
   constructor(options: ApplicationConfig = {}) {
+    options.rest = options.rest ?? {};
+
+    const corsOrigins = process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(',').map(s => s.trim())
+      : [
+          'http://localhost:8080',
+          'https://vue-third-pizza-start-source-production.up.railway.app',
+        ];
+
+    options.rest.cors = {
+      origin: corsOrigins,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+      credentials: true,
+    };
+
     super(options);
 
     // Set up the custom sequence
