@@ -5,11 +5,10 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "@/router";
 
-console.log('=== VITE ENV DEBUG ===');
-console.log('VITE_API_URL from import.meta:', import.meta.env.VITE_API_URL);
-console.log('All env keys:', Object.keys(import.meta.env));
-
-axios.defaults.baseURL = 'https://vue-pizza-backend-production.up.railway.app';
+// Формируем базовый URL для API
+const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const apiPath = import.meta.env.VITE_API_PATH || "/api";
+axios.defaults.baseURL = baseURL + apiPath;
 
 const app = createApp(App);
 

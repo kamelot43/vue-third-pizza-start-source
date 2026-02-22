@@ -2,7 +2,7 @@ import { ApiService } from "../api/api.service";
 
 export class AddressResource extends ApiService {
   constructor() {
-    super("/api/addresses");
+    super("/addresses");
   }
 
   getAddresses() {

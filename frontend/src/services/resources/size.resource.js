@@ -2,7 +2,7 @@ import { ApiService } from "../api/api.service";
 
 export class SizeResource extends ApiService {
   constructor() {
-    super("/api/sizes");
+    super("/sizes");
   }
 
   getSizes() {

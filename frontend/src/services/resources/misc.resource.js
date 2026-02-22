@@ -2,7 +2,7 @@ import { ApiService } from "../api/api.service";
 
 export class MiscResource extends ApiService {
   constructor() {
-    super("/api/misc");
+    super("/misc");
   }
 
   getMisc() {
