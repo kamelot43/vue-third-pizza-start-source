@@ -17,15 +17,20 @@ WORKDIR /home/node/app
 # Копируем package.json
 COPY --chown=node package*.json ./
 
+# Проверяем, что package.json скопировался
+RUN echo "=== package.json после копирования ===" && ls -la package.json && cat package.json
+
 # Устанавливаем зависимости
 RUN npm ci
 
-# Копируем исходники (ВАЖНО: сначала все файлы)
+# Копируем исходники
 COPY --chown=node . .
 
-# ПРОВЕРЯЕМ, ЧТО ФАЙЛЫ СКОПИРОВАЛИСЬ
-RUN echo "=== СОДЕРЖИМОЕ src ===" && ls -la src/ || echo "src не существует"
-RUN echo "=== tsconfig.json ===" && cat tsconfig.json
+# ПРОВЕРЯЕМ, ЧТО ВСЕ ФАЙЛЫ СКОПИРОВАЛИСЬ
+RUN echo "=== СОДЕРЖИМОЕ РАБОЧЕЙ ДИРЕКТОРИИ ===" && ls -la
+RUN echo "=== ПРОВЕРКА .dockerignore ===" && if [ -f .dockerignore ]; then cat .dockerignore; else echo "Нет .dockerignore"; fi
+RUN echo "=== СОДЕРЖИМОЕ src (если есть) ===" && ls -la src/ || echo "src не найдена"
+RUN echo "=== tsconfig.json (если есть) ===" && cat tsconfig.json || echo "tsconfig.json не найден"
 
 # Устанавливаем @loopback/build
 RUN npm install --save-dev @loopback/build
