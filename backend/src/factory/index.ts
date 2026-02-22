@@ -17,44 +17,69 @@ const populateUsers = async (
   user: { name: string, email: string, password: string, avatar: string, phone: string },
   userRepository: UserRepository
 ) => {
-  const password = await hash(user.password, await genSalt());
-  const newUser = await userRepository.create(_.omit(user, 'password'));
-  return userRepository.customUserCredentials(newUser.id).create({password});
+  // Проверяем, есть ли уже такой пользователь
+  const existing = await userRepository.findOne({ where: { email: user.email } });
+  if (!existing) {
+    const password = await hash(user.password, await genSalt());
+    const newUser = await userRepository.create(_.omit(user, 'password'));
+    return userRepository.customUserCredentials(newUser.id).create({ password });
+  }
+  return existing;
 }
 
-const populateDough = (
-    dough: { name: string, image: string, description: string },
-    doughRepository: DoughRepository
+const populateDough = async (
+  dough: { name: string, image: string, description: string },
+  doughRepository: DoughRepository
 ) => {
-  return doughRepository.create(dough);
+  const existing = await doughRepository.findOne({ where: { name: dough.name } });
+  if (!existing) {
+    return doughRepository.create(dough);
+  }
+  return existing;
 };
 
-const populateIngredients = (
-    ingredient: { name: string, image: string },
-    ingredientRepository: IngredientRepository
+const populateIngredients = async (
+  ingredient: { name: string, image: string },
+  ingredientRepository: IngredientRepository
 ) => {
-  return ingredientRepository.create(ingredient);
+  const existing = await ingredientRepository.findOne({ where: { name: ingredient.name } });
+  if (!existing) {
+    return ingredientRepository.create(ingredient);
+  }
+  return existing;
 };
 
-const populateSauces = (
-    sauce: { name: string },
-    sauceRepository: SauceRepository
+const populateSauces = async (
+  sauce: { name: string },
+  sauceRepository: SauceRepository
 ) => {
-  return sauceRepository.create(sauce);
+  const existing = await sauceRepository.findOne({ where: { name: sauce.name } });
+  if (!existing) {
+    return sauceRepository.create(sauce);
+  }
+  return existing;
 };
 
-const populateSizes = (
-    size: { name: string, image: string, multiplier: number },
-    sizeRepository: SizeRepository
+const populateSizes = async (
+  size: { name: string, image: string, multiplier: number },
+  sizeRepository: SizeRepository
 ) => {
-  return sizeRepository.create(size);
+  const existing = await sizeRepository.findOne({ where: { name: size.name } });
+  if (!existing) {
+    return sizeRepository.create(size);
+  }
+  return existing;
 };
 
-const populateMisc = (
-    misc: { name: string, image: string, price: number },
-    miscRepository: MiscRepository
+const populateMisc = async (
+  misc: { name: string, image: string, price: number },
+  miscRepository: MiscRepository
 ) => {
-  return miscRepository.create(misc);
+  const existing = await miscRepository.findOne({ where: { name: misc.name } });
+  if (!existing) {
+    return miscRepository.create(misc);
+  }
+  return existing;
 };
 
 export default async function load(app: Application) {
@@ -76,5 +101,5 @@ export default async function load(app: Application) {
   const miscPromises = misc.map(async m => populateMisc(m, await app.getRepository(MiscRepository)))
   await Promise.all(miscPromises);
 
-  console.log('Dummy data is populated')
+  console.log('Dummy data is populated (if it was empty)')
 }
