@@ -17,18 +17,22 @@ WORKDIR /home/node/app
 # Копируем package.json
 COPY --chown=node package*.json ./
 
-# Устанавливаем зависимости
+# Устанавливаем зависимости (без аудита для скорости)
 RUN npm ci --no-audit
 
 # Копируем исходники
 COPY --chown=node . .
 
-# МАКСИМАЛЬНАЯ ОТЛАДКА
+# МАКСИМАЛЬНАЯ ОТЛАДКА (с исправленными ошибками)
 RUN echo "=== СОДЕРЖИМОЕ ДИРЕКТОРИИ ===" && ls -la
 RUN echo "=== СОДЕРЖИМОЕ package.json ===" && cat package.json
-RUN echo "=== ВСЕ СКРИПТЫ ===" && npm run
-RUN echo "=== ПРОВЕРЯЕМ node_modules/.bin ===" && ls -la node_modules/.bin/ | grep lb
-RUN echo "=== ПРОВЕРЯЕМ @loopback/build ===" && ls -la node_modules/@loopback/build/bin/ || echo "Нет папки"
+RUN echo "=== ВСЕ СКРИПТЫ ===" && npm run || echo "npm run показал скрипты"
+
+# Проверяем node_modules/.bin (без grep, чтобы не падать)
+RUN echo "=== ПРОВЕРЯЕМ node_modules/.bin ===" && ls -la node_modules/.bin/ || echo "Нет файлов в .bin"
+
+# Проверяем @loopback/build
+RUN echo "=== ПРОВЕРЯЕМ @loopback/build ===" && ls -la node_modules/@loopback/build/bin/ 2>/dev/null || echo "Нет папки @loopback/build"
 
 # Пробуем разные способы сборки
 RUN echo "=== СПОСОБ 1: npx ===" && npx lb-tsc || echo "npx не сработал"
