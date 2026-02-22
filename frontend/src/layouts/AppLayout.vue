@@ -7,31 +7,39 @@
 <script setup>
 import { shallowRef, watch } from "vue";
 import { useRoute } from "vue-router";
-import AppLayoutDefault from "@/layouts/DefaultLayout.vue";
+
+// Собираем все layout-файлы из папки src/layouts
+const layouts = import.meta.glob("/src/layouts/*.vue");
 
 const route = useRoute();
 const layout = shallowRef(null);
 
-// Наблюдаем за изменением маршрута
 watch(
   () => route.meta,
   async (meta) => {
-    console.log("Route meta changed:", meta);
+    const layoutName = meta.layout || "DefaultLayout";
     try {
-      if (meta.layout) {
-        // Правильный динамический импорт с алиасом @
-        const component = await import(`@/layouts/${meta.layout}.vue`);
-        layout.value = component?.default || AppLayoutDefault;
+      // Формируем ключ для доступа к загрузчику
+      const loader = layouts[`/src/layouts/${layoutName}.vue`];
+      if (loader) {
+        const component = await loader();
+        layout.value = component?.default;
       } else {
-        layout.value = AppLayoutDefault;
+        throw new Error("Layout not found");
       }
     } catch (e) {
       console.error(
         "Динамический шаблон не найден. Установлен шаблон по-умолчанию.",
         e,
       );
-      layout.value = AppLayoutDefault;
+      // Загружаем дефолтный layout
+      const defaultLoader = layouts["/src/layouts/DefaultLayout.vue"];
+      if (defaultLoader) {
+        const defaultComponent = await defaultLoader();
+        layout.value = defaultComponent?.default;
+      }
     }
   },
+  { immediate: true }, // сразу загружаем при монтировании
 );
 </script>
