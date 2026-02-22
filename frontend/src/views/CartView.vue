@@ -64,7 +64,9 @@
         </button>
       </div>
     </section>
-    <Popup v-if="popup.isVisible" />
+    <transition name="fade">
+      <Popup v-if="popup.isVisible" />
+    </transition>
   </form>
 </template>
 

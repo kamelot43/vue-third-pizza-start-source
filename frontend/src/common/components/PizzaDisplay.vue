@@ -12,34 +12,40 @@
     </label>
     <div class="content__constructor">
       <AppDrop @drop="onDropIngredient">
-        <div
-          class="pizza"
-          :class="`pizza--foundation--${dough?.value}-${sauce?.value}`"
-        >
-          <div class="pizza__wrapper">
-            <!-- Отображаем выбранные ингредиенты -->
-            <div
-              v-for="(ingredient, index) in ingredients"
-              :key="index"
-              class="pizza__filling"
-              :class="[
-                `pizza__filling--${ingredient.value}`,
-                ingredient.quantity === TWO_INGREDIENTS && 'pizza__filling--second',
-                ingredient.quantity === THREE_INGREDIENTS && 'pizza__filling--third',
-              ]"
-            >
+        <transition name="fade-fast" mode="out-in">
+          <div
+            :key="`${dough?.value}-${sauce?.value}-${size?.value}`"
+            class="pizza"
+            :class="`pizza--foundation--${dough?.value}-${sauce?.value}`"
+          >
+            <div class="pizza__wrapper">
+              <!-- Отображаем выбранные ингредиенты -->
+              <transition-group name="scale">
+                <div
+                  v-for="ingredient in ingredients"
+                  :key="ingredient.id"
+                  class="pizza__filling"
+                  :class="[
+                    `pizza__filling--${ingredient.value}`,
+                    ingredient.quantity === TWO_INGREDIENTS &&
+                      'pizza__filling--second',
+                    ingredient.quantity === THREE_INGREDIENTS &&
+                      'pizza__filling--third',
+                  ]"
+                ></div>
+              </transition-group>
             </div>
           </div>
-        </div>
+        </transition>
       </AppDrop>
     </div>
     <div class="content__result">
       <p>Итого: {{ totalPrice }} ₽</p>
       <button
-          type="button"
-          class="button"
-          @click="addToCart"
-          :disabled="!pizzaStore.isPizzaValid"
+        type="button"
+        class="button"
+        :disabled="!pizzaStore.isPizzaValid"
+        @click="addToCart"
       >
         Готовьте!
       </button>
@@ -48,18 +54,18 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 import AppDrop from "@/common/components/AppDrop.vue";
 import { usePizzaStore } from "@/stores/pizza";
-import { useCartStore  } from '@/stores/cart';
-import { useRouter } from 'vue-router';
+import { useCartStore } from "@/stores/cart";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   dough: Object,
   sauce: Object,
   size: Object,
   ingredients: Array,
-  modelValue: String
+  modelValue: String,
 });
 
 const pizzaStore = usePizzaStore(); // Используем хранилище напрямую для логики
@@ -73,29 +79,28 @@ const addToCart = () => {
   cartStore.addPizza({
     ...pizzaStore.$state,
     id: Date.now(), // Уникальный ID
-    totalPrice: pizzaStore.totalPrice
+    totalPrice: pizzaStore.totalPrice,
   });
 
   // Очищаем конструктор (но можно закомментировать, если нужно сохранять)
   pizzaStore.$reset();
 
   // Переходим в корзину
-  router.push('/cart');
+  router.push("/cart");
 };
-
 
 // Общая цена (переносим логику в хранилище)
 const totalPrice = computed(() => {
   return pizzaStore.totalPrice;
 });
 
-const emit = defineEmits(['add-ingredient']);
+const emit = defineEmits(["add-ingredient", 'update:modelValue']);
 
 const TWO_INGREDIENTS = 2;
 const THREE_INGREDIENTS = 3;
 
 const onDropIngredient = (ingredient) => {
-  emit('add-ingredient', ingredient);
+  emit("add-ingredient", ingredient);
 };
 </script>
 
