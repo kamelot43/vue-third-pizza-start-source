@@ -26,11 +26,8 @@ COPY --chown=node . .
 # Проверяем наличие скрипта build
 RUN cat package.json | grep -A 5 "\"scripts\""
 
-# Проверяем наличие скрипта build
-RUN cat package.json | grep -A 5 "\"scripts\""
-
 # Собираем проект через node_modules (правильный путь!)
-RUN ./node_modules/.bin/lb-tsc
+RUN npm run build
 
 # Проверяем, что dist создалась
 RUN ls -la dist/
