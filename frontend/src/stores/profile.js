@@ -2,7 +2,7 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "@/stores/auth";
 import resources from "@/services/resources";
-import { getAddressKey } from "@/common/helpers/addressKey"; // если делаешь дедуп
+import { getAddressKey } from "@/common/helpers/addressKey";
 
 export const useProfileStore = defineStore("profile", {
   state: () => ({
@@ -12,7 +12,6 @@ export const useProfileStore = defineStore("profile", {
 
   actions: {
     setAddresses(list) {
-      // если без дедупа — просто: this.addresses = list;
       const map = new Map();
       for (const addr of list) {
         const key = getAddressKey(addr);
@@ -48,7 +47,6 @@ export const useProfileStore = defineStore("profile", {
         throw res.data;
       }
 
-      // после успешного создания просто перезагружаем список
       await this.refreshAddresses();
     },
 
@@ -65,8 +63,6 @@ export const useProfileStore = defineStore("profile", {
         throw res.data;
       }
 
-      // API вернул 204, тело пустое — забиваем на res.data и
-      // просто заново запрашиваем все адреса
       await this.refreshAddresses();
     },
 

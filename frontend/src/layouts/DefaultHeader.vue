@@ -3,10 +3,10 @@
     <div class="header__logo">
       <router-link :to="{ name: 'home' }" class="logo">
         <img
-            :src="getPublicImage('/public/img/logo.svg')"
-            alt="V!U!E! Pizza logo"
-            width="90"
-            height="40"
+          :src="getPublicImage('/public/img/logo.svg')"
+          alt="V!U!E! Pizza logo"
+          width="90"
+          height="40"
         />
       </router-link>
     </div>
@@ -16,17 +16,17 @@
     <div class="header__user">
       <router-link v-if="authStore.isAuthenticated" :to="{ name: 'profile' }">
         <img
-            :src="getPublicImage(authStore.user.avatar)"
-            :alt="authStore.user.name"
-            width="32"
-            height="32"
+          :src="getPublicImage(authStore.user.avatar)"
+          :alt="authStore.user.name"
+          width="32"
+          height="32"
         />
         <span>{{ authStore.user.name }}</span>
       </router-link>
       <div
-          v-if="authStore.isAuthenticated"
-          class="header__logout"
-          @click="logout"
+        v-if="authStore.isAuthenticated"
+        class="header__logout"
+        @click="logout"
       >
         <span>Выйти</span>
       </div>
@@ -38,10 +38,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
-import { useCartStore} from "../stores/cart";
+import { useCartStore } from "../stores/cart";
 import { getPublicImage } from "@/common/helpers/publicImage";
 
 const authStore = useAuthStore();
@@ -55,9 +55,8 @@ const logout = async () => {
 
 // Форматируем сумму для отображения
 const formattedTotal = computed(() => {
-  return cartStore.total.toLocaleString('ru-RU');
+  return cartStore.total.toLocaleString("ru-RU");
 });
-
 </script>
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds";

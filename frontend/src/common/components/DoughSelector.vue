@@ -4,18 +4,18 @@
       <h2 class="title title--small sheet__title">Выберите тесто</h2>
       <div class="sheet__content dough">
         <label
-            v-for="doughType in doughItems"
-            class="dough__input"
-            :class="`dough__input--${doughType.value}`"
-            :key="doughType.id"
+          v-for="doughType in doughItems"
+          :key="doughType.id"
+          class="dough__input"
+          :class="`dough__input--${doughType.value}`"
         >
           <input
-              type="radio"
-              name="dought"
-              :value="doughType.value"
-              class="visually-hidden"
-              :checked="doughType.id === modelValue?.id"
-              @change="$emit('update:modelValue', doughType)"
+            type="radio"
+            name="dought"
+            :value="doughType.value"
+            class="visually-hidden"
+            :checked="doughType.id === modelValue?.id"
+            @change="$emit('update:modelValue', doughType)"
           />
           <img :src="getPublicImage(doughType.image)" :alt="doughType.name" />
           <b>{{ doughType.name }}</b>
@@ -29,18 +29,18 @@
 <script setup>
 import { getPublicImage } from "@/common/helpers/publicImage";
 
-const props = defineProps({
+defineProps({
   doughItems: {
     type: Array,
     required: true,
   },
   modelValue: {
-    type: Object
-  }
-})
+    type: Object,
+    default: null,
+  },
+});
 
-defineEmits(['update:modelValue']);
-
+defineEmits(["update:modelValue"]);
 </script>
 
 <style scoped>
@@ -95,11 +95,10 @@ defineEmits(['update:modelValue']);
 }
 
 .dough__input:hover img {
-  box-shadow: 0 0 0 2px rgba(65, 182, 25, .6);
+  box-shadow: 0 0 0 2px rgba(65, 182, 25, 0.6);
 }
 
 .dough__input input:checked + img {
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); */
   box-shadow: 0 0 0 2px #41b619;
 }
 </style>

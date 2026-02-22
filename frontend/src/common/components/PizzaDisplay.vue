@@ -60,12 +60,27 @@ import { usePizzaStore } from "@/stores/pizza";
 import { useCartStore } from "@/stores/cart";
 import { useRouter } from "vue-router";
 
-const props = defineProps({
-  dough: Object,
-  sauce: Object,
-  size: Object,
-  ingredients: Array,
-  modelValue: String,
+defineProps({
+  dough: {
+    type: Object,
+    default: null,
+  },
+  sauce: {
+    type: Object,
+    default: null,
+  },
+  size: {
+    type: Object,
+    default: null,
+  },
+  ingredients: {
+    type: Array,
+    default: () => [],
+  },
+  modelValue: {
+    type: String,
+    default: "",
+  },
 });
 
 const pizzaStore = usePizzaStore(); // Используем хранилище напрямую для логики
@@ -94,7 +109,7 @@ const totalPrice = computed(() => {
   return pizzaStore.totalPrice;
 });
 
-const emit = defineEmits(["add-ingredient", 'update:modelValue']);
+const emit = defineEmits(["add-ingredient", "update:modelValue"]);
 
 const TWO_INGREDIENTS = 2;
 const THREE_INGREDIENTS = 3;
@@ -171,7 +186,6 @@ const onDropIngredient = (ingredient) => {
 .content__result button {
   margin-left: 12px;
   padding: 16px 45px;
-  /* background-color: #6c5ce7; */
   color: white;
   border: none;
   border-radius: 8px;

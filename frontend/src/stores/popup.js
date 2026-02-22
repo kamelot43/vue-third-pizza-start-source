@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const usePopupStore = defineStore("popup", {
   state: () => ({
-    isVisible: false
+    isVisible: false,
   }),
   actions: {
     show() {
@@ -10,6 +10,6 @@ export const usePopupStore = defineStore("popup", {
     },
     hide() {
       this.isVisible = false;
-    }
-  }
+    },
+  },
 });

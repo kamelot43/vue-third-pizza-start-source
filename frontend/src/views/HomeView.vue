@@ -1,38 +1,38 @@
 <template>
   <main class="content">
     <form action="#" method="post">
-
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
 
         <!-- Компонент выбора теста -->
         <DoughSelector
-          :doughItems="dataStore.doughs"
           v-model="pizzaStore.dough"
-          @update:modelValue="pizzaStore.setDough"
+          :dough-items="dataStore.doughs"
+          @update:model-value="pizzaStore.setDough"
         />
 
         <!-- Компонент выбора размера -->
         <SizeSelector
-          :sizeItems="dataStore.sizes"
           v-model="pizzaStore.size"
-          @update:modelValue="pizzaStore.setSize"
+          :size-items="dataStore.sizes"
+          @update:model-value="pizzaStore.setSize"
         />
-
 
         <div class="content__ingredients">
           <div class="sheet">
-            <h2 class="title title--small sheet__title">Выберите ингредиенты</h2>
+            <h2 class="title title--small sheet__title">
+              Выберите ингредиенты
+            </h2>
             <div class="sheet__content ingredients">
               <SauceSelector
-                :sauceItems="dataStore.sauces"
                 v-model="pizzaStore.sauce"
-                @update:modelValue="pizzaStore.setSauce"
+                :sauce-items="dataStore.sauces"
+                @update:model-value="pizzaStore.setSauce"
               />
               <IngredientsSelector
-                :ingredientItems="dataStore.ingredients"
-                :modelValue="pizzaStore.ingredients"
-                @changeIngredient="handleIngredientChange"
+                :ingredient-items="dataStore.ingredients"
+                :model-value="pizzaStore.ingredients"
+                @change-ingredient="handleIngredientChange"
               />
             </div>
           </div>
@@ -40,34 +40,31 @@
 
         <!-- Компонент отображения пиццы -->
         <PizzaDisplay
-            :dough="pizzaStore.dough"
-            :sauce="pizzaStore.sauce"
-            :ingredients="pizzaStore.selectedIngredients"
-            :size="pizzaStore.size"
-            :modelValue="pizzaStore.name"
-            @update:modelValue="pizzaStore.setName"
-            @add-ingredient="handleDropIngredient"
-         />
+          :dough="pizzaStore.dough"
+          :sauce="pizzaStore.sauce"
+          :ingredients="pizzaStore.selectedIngredients"
+          :size="pizzaStore.size"
+          :model-value="pizzaStore.name"
+          @update:model-value="pizzaStore.setName"
+          @add-ingredient="handleDropIngredient"
+        />
       </div>
-
     </form>
   </main>
 </template>
 
-
 <script setup>
-import { usePizzaStore } from '@/stores/pizza';
-import { useDataStore  } from '@/stores/data';
+import { usePizzaStore } from "@/stores/pizza";
+import { useDataStore } from "@/stores/data";
 
 const pizzaStore = usePizzaStore();
 const dataStore = useDataStore();
 
 import DoughSelector from "@/common/components/DoughSelector.vue";
-import SauceSelector  from "@/common/components/SauceSelector.vue";
-import IngredientsSelector  from "@/common/components/IngredientsSelector.vue";
+import SauceSelector from "@/common/components/SauceSelector.vue";
+import IngredientsSelector from "@/common/components/IngredientsSelector.vue";
 import SizeSelector from "@/common/components/SizeSelector.vue";
 import PizzaDisplay from "@/common/components/PizzaDisplay.vue";
-
 
 const handleIngredientChange = (ingredient, newCount) => {
   // Проверяем максимальное значение
@@ -81,8 +78,6 @@ const handleIngredientChange = (ingredient, newCount) => {
 const handleDropIngredient = (ingredient) => {
   pizzaStore.addIngredient(ingredient); // Используем action из хранилища
 };
-
-
 </script>
 
 <style lang="scss">

@@ -1,13 +1,11 @@
 <template>
-  <default-header/>
+  <default-header />
   <slot />
 </template>
-
 
 <script setup>
 import DefaultHeader from "./DefaultHeader.vue";
 </script>
-
 
 <style lang="scss" scoped>
 .default-layout {

@@ -2,7 +2,6 @@
   <transition name="popup">
     <div v-if="popup.isVisible" class="popup-overlay" @click.self="close">
       <div class="popup">
-        <!-- Крестик -->
         <button type="button" class="close" @click="confirm">
           <span class="visually-hidden">Закрыть попап</span>
         </button>
@@ -41,7 +40,6 @@ const close = () => {
   popup.hide();
 };
 
-// закрываем попап и уходим на нужную страницу
 const confirm = () => {
   popup.hide();
   router.push({ name: redirectRouteName.value });
@@ -129,14 +127,13 @@ const confirm = () => {
 }
 
 .popup__button {
-  // для старого варианта через <router-link>
   :deep(a) {
     padding: 16px 32px;
   }
 
-  // для текущего варианта с <button class="button">
   .button {
     padding: 16px 32px;
+    width: 100%;
   }
 }
 
@@ -161,8 +158,6 @@ const confirm = () => {
   color: $black;
   border-radius: 50%;
   outline: none;
-
-  /* 🔽 добавь вот это */
   border: none;
   background: transparent;
   padding: 0;

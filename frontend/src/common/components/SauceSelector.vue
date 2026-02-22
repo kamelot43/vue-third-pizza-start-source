@@ -1,34 +1,35 @@
 <template>
-    <div class="ingredients__sauce">
-      <p>Основной соус:</p>
-        <label
-            class="radio ingredients__input"
-            v-for="sauceType in sauceItems"
-            :key="sauceType.id"
-        >
-          <input 
-            type="radio" 
-            name="sauce" 
-            :value="sauceType.value" 
-            :checked="sauceType.id === modelValue?.id"
-            @change="$emit('update:modelValue', sauceType)"
-          />
-          <span>{{ sauceType.name }}</span>
-        </label>
+  <div class="ingredients__sauce">
+    <p>Основной соус:</p>
+    <label
+      v-for="sauceType in sauceItems"
+      :key="sauceType.id"
+      class="radio ingredients__input"
+    >
+      <input
+        type="radio"
+        name="sauce"
+        :value="sauceType.value"
+        :checked="sauceType.id === modelValue?.id"
+        @change="$emit('update:modelValue', sauceType)"
+      />
+      <span>{{ sauceType.name }}</span>
+    </label>
   </div>
 </template>
 
 <script setup>
-defineEmits(['update:modelValue']);
+defineEmits(["update:modelValue"]);
 
-const props = defineProps({
+defineProps({
   sauceItems: {
     type: Array,
     required: true,
   },
   modelValue: {
-    type: Object
-  }
+    type: Object,
+    default: null,
+  },
 });
 </script>
 
@@ -88,17 +89,8 @@ const props = defineProps({
   width: 20px;
   height: 20px;
   transform: translateY(-50%);
-  /*border: 1px solid #7e72f2; */
   border-radius: 50%;
   background-color: white;
   transition: border-color 0.3s;
 }
-
-/* .ingredients__input:hover span::before {
-  border-color: #5c4ac7;
-}
-
-.ingredients__input input:checked + span::before {
-  border: 6px solid #6c5ce7;
-} */
 </style>

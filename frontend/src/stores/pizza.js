@@ -18,30 +18,33 @@ export const usePizzaStore = defineStore("pizza", {
         };
         return acc;
       }, {}),
-    }
+    };
   },
   getters: {
     selectedIngredients: (state) => {
       return Object.values(state.ingredients)
-        .filter(item => item.count > 0)
-        .map(item => ({
+        .filter((item) => item.count > 0)
+        .map((item) => ({
           ...item.ingredient,
-          quantity: item.count
+          quantity: item.count,
         }));
     },
 
     totalPrice: (state) => {
       if (!state.size) return 0;
       const ingredientsSum = state.selectedIngredients.reduce(
-        (sum, ing) => sum + (ing.price * ing.quantity),
-        0
+        (sum, ing) => sum + ing.price * ing.quantity,
+        0,
       );
-      return state.size.multiplier * (state.dough.price + state.sauce.price + ingredientsSum);
+      return (
+        state.size.multiplier *
+        (state.dough.price + state.sauce.price + ingredientsSum)
+      );
     },
 
     isPizzaValid: (state) => {
-      return state.name.trim() !== '' && state.totalPrice > 0; // Используем state.totalPrice
-    }
+      return state.name.trim() !== "" && state.totalPrice > 0; // Используем state.totalPrice
+    },
   },
   actions: {
     setName(name) {
@@ -73,7 +76,7 @@ export const usePizzaStore = defineStore("pizza", {
       this.ingredients[ingredientId].count = clampedCount;
       console.log("Ингредиент обновлён:", {
         id: ingredientId,
-        count: clampedCount
+        count: clampedCount,
       });
     },
 
@@ -97,6 +100,6 @@ export const usePizzaStore = defineStore("pizza", {
         sauce: this.sauce,
         ingredients: this.ingredients,
       });
-    }
-  }
+    },
+  },
 });

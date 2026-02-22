@@ -1,33 +1,33 @@
-import { reactive, toRefs } from 'vue';
-import {EMAIL_REGEX} from "../constants";
+import { reactive, toRefs } from "vue";
+import { EMAIL_REGEX } from "../constants";
 
 // Набор правил: для каждого поля список функций-валидаторов и сообщений
 const defaultRules = {
   required: {
-    validate: v => String(v).trim().length > 0,
-    message: 'Поле обязательно для заполнения',
+    validate: (v) => String(v).trim().length > 0,
+    message: "Поле обязательно для заполнения",
   },
   email: {
-    validate: v => EMAIL_REGEX.test(String(v).toLowerCase()),
-    message: 'Неверный формат e-mail',
-  }
+    validate: (v) => EMAIL_REGEX.test(String(v).toLowerCase()),
+    message: "Неверный формат e-mail",
+  },
 };
 
 export function useFormValidation(initialValues, fieldRules) {
   // form — реактивный объект со всеми полями формы
-  const form   = reactive({ ...initialValues });
+  const form = reactive({ ...initialValues });
   // errors — реактивный объект, куда пишем текст ошибки для каждого поля
   const errors = reactive(
     Object.keys(initialValues).reduce((acc, key) => {
-      acc[key] = '';
+      acc[key] = "";
       return acc;
-    }, {})
+    }, {}),
   );
 
   // проверка одного поля по списку ключей правил
   function validateField(field) {
-    errors[field] = ''; // сброс
-    const val   = form[field];
+    errors[field] = ""; // сброс
+    const val = form[field];
     const rules = fieldRules[field] || [];
     for (const ruleName of rules) {
       const rule = defaultRules[ruleName];
@@ -53,7 +53,7 @@ export function useFormValidation(initialValues, fieldRules) {
   // сброс всех ошибок
   function resetErrors() {
     for (const field of Object.keys(errors)) {
-      errors[field] = '';
+      errors[field] = "";
     }
   }
 

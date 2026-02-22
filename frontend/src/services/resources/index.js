@@ -5,7 +5,7 @@ import { MiscResource } from "@/services/resources/misc.resource";
 import { OrderResource } from "@/services/resources/order.resource";
 import { SauceResource } from "@/services/resources/sauce.resource";
 import { SizeResource } from "@/services/resources/size.resource";
-import { AuthService} from "../api/auth.service";
+import { AuthService } from "../api/auth.service";
 
 export default {
   auth: new AuthService("/api"),

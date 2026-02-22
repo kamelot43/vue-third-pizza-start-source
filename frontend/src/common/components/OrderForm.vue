@@ -26,9 +26,9 @@
       <input
         type="tel"
         :value="phone"
-        @input="phone = $event.target.value"
         placeholder="+7 999 999-99-99"
         required
+        @input="phone = $event.target.value"
       />
     </label>
 
@@ -43,10 +43,10 @@
           <input
             type="text"
             :value="address.street"
-            @input="updateAddress('street', $event.target.value)"
             placeholder="Введите название улицы"
             :disabled="isExistingAddress"
             required
+            @input="updateAddress('street', $event.target.value)"
           />
         </label>
       </div>
@@ -56,10 +56,10 @@
           <input
             type="text"
             :value="address.building"
-            @input="updateAddress('building', $event.target.value)"
             placeholder="Номер дома"
             :disabled="isExistingAddress"
             required
+            @input="updateAddress('building', $event.target.value)"
           />
         </label>
       </div>
@@ -69,9 +69,9 @@
           <input
             type="text"
             :value="address.flat"
-            @input="updateAddress('flat', $event.target.value)"
             placeholder="Номер квартиры"
             :disabled="isExistingAddress"
+            @input="updateAddress('flat', $event.target.value)"
           />
         </label>
       </div>
@@ -82,7 +82,6 @@
 <script setup>
 import { computed } from "vue";
 import { useProfileStore } from "@/stores/profile";
-import { toRaw } from "vue";
 
 const profileStore = useProfileStore();
 
@@ -128,8 +127,6 @@ const isExistingAddress = computed(
 
 // значение селекта
 const selectValue = computed(() => {
-  console.log("address", toRaw(address.value));
-  console.log("deliveryType", toRaw(deliveryType.value));
   if (deliveryType.value === "existing" && address.value?.id) {
     return address.value.id; // id существующего адреса
   }
@@ -177,14 +174,5 @@ const updateAddress = (field, value) => {
     ...address.value,
     [field]: value,
   });
-};
-
-const formatAddress = (addr) => {
-  if (!addr) return "";
-  let res = `${addr.street}, д. ${addr.building}`;
-  if (addr.flat) {
-    res += `, кв. ${addr.flat}`;
-  }
-  return res;
 };
 </script>

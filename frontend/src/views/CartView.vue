@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submitOrder" class="layout-form">
+  <form class="layout-form" @submit.prevent="submitOrder">
     <main class="content cart">
       <div class="container">
         <div class="cart__title">
@@ -65,7 +65,7 @@
       </div>
     </section>
     <transition name="fade">
-      <Popup v-if="popup.isVisible" />
+      <AppPopup v-if="popup.isVisible" />
     </transition>
   </form>
 </template>
@@ -81,7 +81,7 @@ import { computed, onMounted } from "vue";
 import PizzaCartItem from "@/common/components/PizzaCartItem.vue";
 import MiscItem from "@/common//components/MiscItem.vue";
 import OrderForm from "@/common//components/OrderForm.vue";
-import Popup from "@/common/components/Popup.vue";
+import AppPopup from "@/common/components/AppPopup.vue";
 
 const router = useRouter();
 const auth = useAuthStore();

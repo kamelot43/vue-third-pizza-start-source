@@ -4,18 +4,18 @@
       <h2 class="title title--small sheet__title">Выберите размер</h2>
       <div class="sheet__content diameter">
         <label
-            v-for="sizeType in sizeItems"
-            class="diameter__input diameter__input--small"
-            :class="`diameter__input--${sizeType.value}`"
-            :key="sizeType.id"
+          v-for="sizeType in sizeItems"
+          :key="sizeType.id"
+          class="diameter__input diameter__input--small"
+          :class="`diameter__input--${sizeType.value}`"
         >
           <input
-              type="radio"
-              name="diameter"
-              :value="sizeType.value"
-              class="visually-hidden"
-              :checked="sizeType.id === modelValue?.id"
-              @change="$emit('update:modelValue', sizeType)"
+            type="radio"
+            name="diameter"
+            :value="sizeType.value"
+            class="visually-hidden"
+            :checked="sizeType.id === modelValue?.id"
+            @change="$emit('update:modelValue', sizeType)"
           />
           <span>{{ sizeType.name }}</span>
         </label>
@@ -25,18 +25,18 @@
 </template>
 
 <script setup>
-
-const props = defineProps({
+defineProps({
   sizeItems: {
     type: Array,
     required: true,
   },
   modelValue: {
-    type: Object
-  }
+    type: Object,
+    default: null,
+  },
 });
 
-defineEmits(['update:modelValue']);
+defineEmits(["update:modelValue"]);
 </script>
 
 <style scoped>
@@ -93,12 +93,10 @@ defineEmits(['update:modelValue']);
 }
 
 .diameter__input:hover span::before {
-  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
-  box-shadow: 0 0 0 2px rgba(65, 182, 25, .6);
+  box-shadow: 0 0 0 2px rgba(65, 182, 25, 0.6);
 }
 
 .diameter__input input:checked + span::before {
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); */
   box-shadow: 0 0 0 2px #41b619;
 }
 </style>

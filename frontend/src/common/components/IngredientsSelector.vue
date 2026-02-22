@@ -3,18 +3,23 @@
     <p>Начинка:</p>
     <ul class="ingredients__list">
       <li
-          v-for="ingredient in ingredientItems"
-          class="ingredients__item"
-          :key="ingredient.id"
+        v-for="ingredient in ingredientItems"
+        :key="ingredient.id"
+        class="ingredients__item"
       >
-        <AppDrag
-          :transferData="ingredient"
-          :draggable="canDrag(ingredient)"
-        >
-        <span class="filling" :class="`filling--${ingredient.name}`" style="display: inline-block;">
-          <img :src="getPublicImage(ingredient.image)" :alt="ingredient.name" draggable="false">
-          {{ ingredient.name }}
-        </span>
+        <AppDrag :transfer-data="ingredient" :draggable="canDrag(ingredient)">
+          <span
+            class="filling"
+            :class="`filling--${ingredient.name}`"
+            style="display: inline-block"
+          >
+            <img
+              :src="getPublicImage(ingredient.image)"
+              :alt="ingredient.name"
+              draggable="false"
+            />
+            {{ ingredient.name }}
+          </span>
         </AppDrag>
         <AppCounter
           :count="modelValue[ingredient.id]?.count || 0"
@@ -30,7 +35,7 @@
 </template>
 
 <script setup>
-import {defineProps} from "vue";
+import { defineProps } from "vue";
 import AppDrag from "@/common/components/AppDrag.vue";
 import AppCounter from "@/common/components/AppCounter.vue";
 import { getPublicImage } from "@/common/helpers/publicImage";
@@ -43,13 +48,13 @@ const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
-  }
+  },
 });
 
-const emit = defineEmits(['changeIngredient']);
+const emit = defineEmits(["changeIngredient"]);
 
 const updateCount = (ingredient, newCount) => {
-  emit('changeIngredient', ingredient, newCount);
+  emit("changeIngredient", ingredient, newCount);
 };
 
 const getCount = (ingredientId) => {
@@ -59,11 +64,9 @@ const getCount = (ingredientId) => {
 const canDrag = (ingredient) => {
   return getCount(ingredient.id) < 3;
 };
-
 </script>
 
 <style scoped>
-
 .ingredients__filling {
   width: 100%;
 }

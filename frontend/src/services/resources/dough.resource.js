@@ -1,4 +1,4 @@
-import {ApiService} from "../api/api.service";
+import { ApiService } from "../api/api.service";
 
 export class DoughResource extends ApiService {
   constructor() {

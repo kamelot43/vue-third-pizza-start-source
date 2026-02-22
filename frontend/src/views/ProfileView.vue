@@ -38,10 +38,10 @@
   </div>
 
   <!-- Форма редактирования/добавления -->
-  <div class="layout__address" v-if="showForm">
+  <div v-if="showForm" class="layout__address">
     <form
-      @submit.prevent="handleSubmit"
       class="address-form address-form--opened sheet"
+      @submit.prevent="handleSubmit"
     >
       <div class="address-form__header">
         <b>{{ editingAddress.id ? "Редактирование адреса" : "Новый адрес" }}</b>
@@ -130,7 +130,7 @@
   </div>
 
   <!-- Кнопка добавления нового адреса -->
-  <div class="layout__button" v-if="!showForm">
+  <div v-if="!showForm" class="layout__button">
     <button type="button" class="button button--border" @click="addNewAddress">
       Добавить новый адрес
     </button>
