@@ -1,8 +1,12 @@
+import axios from "axios";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import router from "@/router";
+
+axios.defaults.baseURL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 const app = createApp(App);
 
