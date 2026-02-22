@@ -4,26 +4,11 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "@/router";
 
-// Автоматическое определение режима сборки
-const isProduction = import.meta.env.PROD; // true для продакшн-сборки
+// Базовый URL для всех API-запросов
+const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+axios.defaults.baseURL = baseURL;
 
-// Настройка базового URL в зависимости от режима
-let baseURL;
-let apiPath;
-
-if (isProduction) {
-  // Продакшен — используем реальный домен бэкенда
-  baseURL = "https://vue-pizza-backend-production.up.railway.app";
-  apiPath = ""; // без префикса /api
-} else {
-  // Разработка — используем переменные окружения или localhost
-  baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
-  apiPath = import.meta.env.VITE_API_PATH || "/api";
-}
-
-axios.defaults.baseURL = baseURL + apiPath;
-
-console.log("=== API BASE URL ===", axios.defaults.baseURL);
+console.log("API Base URL:", axios.defaults.baseURL); // для отладки
 
 const app = createApp(App);
 app.use(createPinia());
