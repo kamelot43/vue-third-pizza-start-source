@@ -1,47 +1,37 @@
 FROM node:20-slim
 
-# Устанавливаем необходимые пакеты
 RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
+    python3 make g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Создаем директорию и даем права
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 
 USER node
-
 WORKDIR /home/node/app
 
-# Копируем package.json
+# ---- Шаг 1: копируем только package.json ----
 COPY --chown=node package*.json ./
+RUN echo "=== ПОСЛЕ КОПИРОВАНИЯ package.json ===" && ls -la
 
-# Проверяем, что package.json скопировался
-RUN echo "=== package.json после копирования ===" && ls -la package.json && cat package.json
-
-# Устанавливаем зависимости
+# ---- Шаг 2: устанавливаем зависимости ----
 RUN npm ci
+RUN echo "=== ПОСЛЕ npm ci ===" && ls -la
 
-# Копируем исходники
+# ---- Шаг 3: копируем все исходники ----
 COPY --chown=node . .
+RUN echo "=== ПОСЛЕ КОПИРОВАНИЯ . . ===" && ls -la
 
-# ПРОВЕРЯЕМ, ЧТО ВСЕ ФАЙЛЫ СКОПИРОВАЛИСЬ
-RUN echo "=== СОДЕРЖИМОЕ РАБОЧЕЙ ДИРЕКТОРИИ ===" && ls -la
-RUN echo "=== ПРОВЕРКА .dockerignore ===" && if [ -f .dockerignore ]; then cat .dockerignore; else echo "Нет .dockerignore"; fi
-RUN echo "=== СОДЕРЖИМОЕ src (если есть) ===" && ls -la src/ || echo "src не найдена"
-RUN echo "=== tsconfig.json (если есть) ===" && cat tsconfig.json || echo "tsconfig.json не найден"
+# ---- Шаг 4: проверяем наличие нужных папок ----
+RUN echo "=== СОДЕРЖИМОЕ src (если есть) ===" && ls -la src || echo "src не найдена"
+RUN echo "=== СОДЕРЖИМОЕ tsconfig.json (если есть) ===" && cat tsconfig.json || echo "tsconfig.json не найден"
 
-# Устанавливаем @loopback/build
+# ---- Шаг 5: устанавливаем @loopback/build и собираем ----
 RUN npm install --save-dev @loopback/build
+RUN npx lb-tsc || echo "СБОРКА НЕ УДАЛАСЬ"
 
-# Запускаем сборку
-RUN echo "=== ЗАПУСК СБОРКИ ===" && npx lb-tsc
-
-# Проверяем результат
-RUN echo "=== ПРОВЕРКА dist ===" && ls -la dist/ || echo "dist НЕ создалась!"
+# ---- Шаг 6: проверяем dist ----
+RUN echo "=== РЕЗУЛЬТАТ СБОРКИ ===" && ls -la dist || echo "dist не создана"
 
 ENV HOST=0.0.0.0 PORT=3000
-EXPOSE ${PORT}
-
+EXPOSE 3000
 CMD ["node", "dist/index.js"]
