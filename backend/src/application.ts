@@ -27,7 +27,7 @@ export class Application extends BootMixin(ServiceMixin(RepositoryMixin(RestAppl
       ? process.env.CORS_ORIGIN.split(',').map(s => s.trim())
       : [
           'http://localhost:8080',
-          'https://vue-third-pizza-start-source.vercel.app/',
+          'https://vue-third-pizza-start-source.vercel.app',
           'https://vue-third-pizza-start-source-production.up.railway.app',
         ];
 
