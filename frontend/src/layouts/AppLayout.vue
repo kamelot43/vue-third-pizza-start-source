@@ -19,10 +19,8 @@ watch(
     console.log("Route meta changed:", meta);
     try {
       if (meta.layout) {
-        // Пробуем найти компонент из свойства meta и динамически импортировать его
-        const component = await import(
-          /* @vite-ignore */ `../layouts/${meta.layout}.vue`
-        );
+        // Правильный динамический импорт с алиасом @
+        const component = await import(`@/layouts/${meta.layout}.vue`);
         layout.value = component?.default || AppLayoutDefault;
       } else {
         layout.value = AppLayoutDefault;
