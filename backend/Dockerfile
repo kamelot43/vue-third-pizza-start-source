@@ -1,37 +1,34 @@
 FROM node:20-slim
 
+# Устанавливаем необходимые пакеты
 RUN apt-get update && apt-get install -y \
     python3 make g++ \
     && rm -rf /var/lib/apt/lists/*
 
+# Создаем директорию и даем права
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
-
 USER node
 WORKDIR /home/node/app
 
-# ---- Шаг 1: копируем только package.json ----
-COPY --chown=node package*.json ./
-RUN echo "=== ПОСЛЕ КОПИРОВАНИЯ package.json ===" && ls -la
+# Копируем package.json из backend (не из корня!)
+COPY --chown=node backend/package*.json ./
 
-# ---- Шаг 2: устанавливаем зависимости ----
+# Устанавливаем зависимости
 RUN npm ci
-RUN echo "=== ПОСЛЕ npm ci ===" && ls -la
 
-# ---- Шаг 3: копируем все исходники ----
-COPY --chown=node . .
-RUN echo "=== ПОСЛЕ КОПИРОВАНИЯ . . ===" && ls -la
+# Копируем все исходники бэкенда (src, tsconfig.json и т.д.)
+COPY --chown=node backend/ ./
 
-# ---- Шаг 4: проверяем наличие нужных папок ----
-RUN echo "=== СОДЕРЖИМОЕ src (если есть) ===" && ls -la src || echo "src не найдена"
-RUN echo "=== СОДЕРЖИМОЕ tsconfig.json (если есть) ===" && cat tsconfig.json || echo "tsconfig.json не найден"
+# Проверяем, что файлы на месте
+RUN ls -la && ls -la src/ && cat tsconfig.json
 
-# ---- Шаг 5: устанавливаем @loopback/build и собираем ----
-RUN npm install --save-dev @loopback/build
-RUN npx lb-tsc || echo "СБОРКА НЕ УДАЛАСЬ"
+# Собираем проект
+RUN npm run build
 
-# ---- Шаг 6: проверяем dist ----
-RUN echo "=== РЕЗУЛЬТАТ СБОРКИ ===" && ls -la dist || echo "dist не создана"
+# Проверяем dist
+RUN ls -la dist/
 
 ENV HOST=0.0.0.0 PORT=3000
-EXPOSE 3000
+EXPOSE ${PORT}
+
 CMD ["node", "dist/index.js"]
