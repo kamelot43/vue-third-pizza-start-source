@@ -23,8 +23,11 @@ RUN npm ci --no-audit
 # Копируем исходники
 COPY --chown=node . .
 
-# Собираем проект
-RUN npm run build
+# Проверяем наличие скрипта build
+RUN cat package.json | grep -A 5 "\"scripts\""
+
+# Собираем проект напрямую через npx
+RUN npx lb-tsc
 
 # Проверяем, что dist создалась
 RUN ls -la dist/
