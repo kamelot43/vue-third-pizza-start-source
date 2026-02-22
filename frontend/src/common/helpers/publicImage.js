@@ -1,11 +1,14 @@
 export const getPublicImage = (path) => {
-  const base =
-    import.meta.env.VITE_API_URL ||
-    `${window.location.protocol}//${window.location.hostname}:3000`;
+  const isProduction = import.meta.env.PROD;
 
-  const p = path.startsWith("/") ? path : `/${path}`;
+  // Базовый URL для статики (картинок)
+  const staticBaseURL = isProduction
+    ? "https://vue-pizza-backend-production.up.railway.app" // <-- ЗДЕСЬ ВАШ ДОМЕН БЭКЕНДА
+    : "http://localhost:3000";
 
-  const clean = p.replace(/^\/api(\/|$)/, "/");
+  // Очищаем путь: убираем возможные /api и лишние слеши
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  const finalPath = cleanPath.replace(/^\/api(\/|$)/, "/");
 
-  return `${base}${clean}`;
+  return `${staticBaseURL}${finalPath}`;
 };
