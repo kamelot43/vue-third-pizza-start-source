@@ -9,7 +9,7 @@ console.log('=== VITE ENV DEBUG ===');
 console.log('VITE_API_URL from import.meta:', import.meta.env.VITE_API_URL);
 console.log('All env keys:', Object.keys(import.meta.env));
 
-axios.defaults.baseURL = 'https://vue-third-pizza-start-source-production.up.railway.app';
+axios.defaults.baseURL = 'https://vue-pizza-backend-production.up.railway.app';
 
 const app = createApp(App);
 
