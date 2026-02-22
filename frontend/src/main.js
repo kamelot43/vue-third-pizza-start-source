@@ -5,6 +5,10 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "@/router";
 
+console.log('=== VITE ENV DEBUG ===');
+console.log('VITE_API_URL from import.meta:', import.meta.env.VITE_API_URL);
+console.log('All env keys:', Object.keys(import.meta.env));
+
 axios.defaults.baseURL =
   import.meta.env.VITE_API_URL || "http://localhost:3000";
 
