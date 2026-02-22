@@ -171,7 +171,7 @@ const onDropIngredient = (ingredient) => {
 .content__result button {
   margin-left: 12px;
   padding: 16px 45px;
-  background-color: #6c5ce7;
+  /* background-color: #6c5ce7; */
   color: white;
   border: none;
   border-radius: 8px;
@@ -180,7 +180,6 @@ const onDropIngredient = (ingredient) => {
 }
 
 .content__result button:disabled {
-  background-color: #a5b1c2;
   cursor: not-allowed;
 }
 </style>

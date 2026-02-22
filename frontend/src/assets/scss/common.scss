@@ -36,9 +36,8 @@
     flex-wrap: wrap;
 
     margin-top: 8px;
-    padding-top: 18px;
-    padding-right: 18px;
-    padding-left: 18px;
+    padding: 18px;
+    padding-bottom: 0;
 
     border-top: 1px solid rgba($green-500, 0.1);
   }
@@ -84,6 +83,7 @@
         border: 1px solid $purple-400;
         border-radius: 50%;
         background-color: $white;
+        transition: border-color 0.3s;
       }
     }
 

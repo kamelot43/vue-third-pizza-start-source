@@ -57,6 +57,7 @@ defineEmits(['update:modelValue']);
   display: flex;
   flex-wrap: wrap;
   padding: 18px;
+  padding-bottom: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -92,10 +93,12 @@ defineEmits(['update:modelValue']);
 }
 
 .diameter__input:hover span::before {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
+  box-shadow: 0 0 0 2px rgba(65, 182, 25, .6);
 }
 
 .diameter__input input:checked + span::before {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); */
+  box-shadow: 0 0 0 2px #41b619;
 }
 </style>

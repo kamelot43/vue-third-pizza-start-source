@@ -102,9 +102,9 @@
     background-color: #f0e6ff;
   }
   
-  .counter__button--plus {
+  /* .counter__button--plus {
     background-color: #6c5ce7;
-  }
+  } */
   
   .counter__input {
     width: 22px;

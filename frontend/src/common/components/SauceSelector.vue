@@ -50,6 +50,7 @@ const props = defineProps({
   display: flex;
   flex-wrap: wrap;
   padding: 18px;
+  padding-bottom: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -87,17 +88,17 @@ const props = defineProps({
   width: 20px;
   height: 20px;
   transform: translateY(-50%);
-  border: 1px solid #7e72f2;
+  /*border: 1px solid #7e72f2; */
   border-radius: 50%;
   background-color: white;
   transition: border-color 0.3s;
 }
 
-.ingredients__input:hover span::before {
+/* .ingredients__input:hover span::before {
   border-color: #5c4ac7;
 }
 
 .ingredients__input input:checked + span::before {
   border: 6px solid #6c5ce7;
-}
+} */
 </style>

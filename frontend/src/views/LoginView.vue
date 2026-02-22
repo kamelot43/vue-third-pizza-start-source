@@ -17,7 +17,7 @@
                 placeholder="example@mail.ru"
                 :class="{ 'input--error': errors.email }"
            />
-           <div class="error">{{ errors.email }}</div>
+           <div class="error" v-if="errors.email">{{ errors.email }}</div>
          </label>
        </div>
 
@@ -32,11 +32,11 @@
                placeholder="***********"
                :class="{ 'input--error': errors.password }"
            />
-           <div class="error">{{ errors.password }}</div>
+           <div class="error" v-if="errors.password">{{ errors.password }}</div>
          </label>
        </div>
        <button type="submit" :disabled="submitting" class="button">Авторизоваться</button>
-       <div class="server-error"> {{ serverError }} </div>
+       <div class="server-error" v-if="serverError"> {{ serverError }} </div>
      </form>
    </div>
  </template>
