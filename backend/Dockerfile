@@ -30,5 +30,4 @@ RUN ls -la dist/
 
 ENV HOST=0.0.0.0 PORT=3000
 EXPOSE ${PORT}
-
-CMD ["node", "dist/index.js"]
+CMD sh -c "printenv && node dist/index.js"
