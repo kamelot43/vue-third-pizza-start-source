@@ -57,6 +57,7 @@ const logout = async () => {
 const formattedTotal = computed(() => {
   return cartStore.total.toLocaleString("ru-RU");
 });
+
 </script>
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds";
@@ -93,7 +94,7 @@ const formattedTotal = computed(() => {
 
     color: $white;
     background-color: $green-500;
-    background-image: url("../api/public/img/cart.svg");
+    background-image: v-bind('$getCssUrl("/public/img/cart.svg")');
     background-repeat: no-repeat;
     background-position: 20px center;
     background-size: 29px 27px;
@@ -172,7 +173,7 @@ const formattedTotal = computed(() => {
     content: "";
     vertical-align: middle;
 
-    background: url("/api/public/img/login.svg") no-repeat center;
+    background: v-bind('$getCssUrl("/public/img/login.svg")') no-repeat center;
     background-size: auto 50%;
   }
 }

@@ -86,10 +86,6 @@ export const useCartStore = defineStore("cart", {
       // Пытаемся найти адрес среди сохранённых
       const saved = profileStore.addresses.find((a) => Number(a.id) === addrId);
 
-      console.log("addrId", addrId);
-      console.log("saved", saved);
-      console.log("profileStore.addresses", toRaw(profileStore.addresses));
-
       if (saved) {
         this.deliveryType = "existing";
         this.address = { ...saved };

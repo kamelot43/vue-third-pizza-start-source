@@ -12,12 +12,14 @@
 import AppLayout from "@/layouts/AppLayout.vue";
 import { onMounted, ref } from "vue";
 import { useDataStore } from "@/stores/data";
+import { usePizzaStore } from "@/stores/pizza";
 import { useAuthStore } from "@/stores/auth";
 import JwtService from "@/services/jwt/jwt.service";
 import { router } from "@/router";
 import { useRoute } from "vue-router";
 
 const dataStore = useDataStore();
+const pizzaStore = usePizzaStore();
 const route = useRoute();
 const isLoaded = ref(false);
 
@@ -41,9 +43,23 @@ const checkLoggedIn = async () => {
   }
 };
 
-onMounted(() => {
-  checkLoggedIn();
-  dataStore.loadData();
+onMounted(async () => {
+  // Загружаем данные
+  await dataStore.loadData();
+  
+  // Проверяем авторизацию (не блокируем загрузку данных)
+  await checkLoggedIn();
+  
+  // Устанавливаем значения по умолчанию для конструктора пиццы
+  if (dataStore.doughs.length) {
+    pizzaStore.setDough(dataStore.doughs[0]);
+  }
+  if (dataStore.sizes.length) {
+    pizzaStore.setSize(dataStore.sizes[0]);
+  }
+  if (dataStore.sauces.length) {
+    pizzaStore.setSauce(dataStore.sauces[0]);
+  }
 });
 </script>
 
