@@ -43,6 +43,50 @@ const checkLoggedIn = async () => {
   }
 };
 
+// Функция предзагрузки всех изображений
+const preloadImages = () => {
+  const baseUrl =
+    import.meta.env.VITE_STATIC_URL ||
+    "https://vue-pizza-backend-production.up.railway.app";
+
+  // Все возможные изображения для предзагрузки
+  const imagesToPreload = [
+    // Ингредиенты (filling-big)
+    ...dataStore.ingredients.map(
+      (i) => `/public/img/filling-big/${i.value}.svg`,
+    ),
+
+    // Фоны основ пиццы
+    "/public/img/foundation/big-creamy.svg",
+    "/public/img/foundation/big-tomato.svg",
+    "/public/img/foundation/small-creamy.svg",
+    "/public/img/foundation/small-tomato.svg",
+
+    // Иконки
+    "/public/img/cart.svg",
+    "/public/img/login.svg",
+    "/public/img/button-arrow.svg",
+    "/public/img/popup.svg",
+    "/public/img/edit.svg",
+    "/public/img/product.svg",
+
+    // Ингредиенты для попапа (маленькие)
+    "/public/img/filling/ananas.svg",
+    "/public/img/filling/tomatoes.svg",
+
+    // Изображения для диаметров
+    "/public/img/diameter.svg",
+  ];
+
+  // Загружаем каждое изображение
+  imagesToPreload.forEach((src) => {
+    const img = new Image();
+    img.src = `${baseUrl}${src}`;
+  });
+
+  console.log("Preloaded", imagesToPreload.length, "images");
+};
+
 onMounted(async () => {
   // Загружаем данные
   await dataStore.loadData();
@@ -59,6 +103,10 @@ onMounted(async () => {
   }
   if (dataStore.sauces.length) {
     pizzaStore.setSauce(dataStore.sauces[0]);
+  }
+
+  if (dataStore.isDataLoaded) {
+    preloadImages();
   }
 });
 </script>

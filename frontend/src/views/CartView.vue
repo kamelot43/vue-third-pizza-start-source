@@ -328,6 +328,10 @@ const submitOrder = async () => {
   a {
     padding-top: 16px;
     padding-bottom: 16px;
+
+    &:before {
+      display: none;
+    }
   }
 }
 
