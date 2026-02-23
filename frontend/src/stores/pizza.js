@@ -38,7 +38,7 @@ export const usePizzaStore = defineStore("pizza", {
       );
       return (
         state.size.multiplier *
-        (state.dough.price + state.sauce.price + ingredientsSum)
+        (state.dough.price + state.sauce?.price + ingredientsSum)
       );
     },
 
