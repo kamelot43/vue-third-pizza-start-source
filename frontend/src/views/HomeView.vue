@@ -1,6 +1,10 @@
 <template>
   <main class="content">
-    <form action="#" method="post">
+    <div v-if="isLoading" class="loader-container">
+      <div class="loader"></div>
+      <p>Загружаем ингредиенты...</p>
+    </div>
+    <form v-else action="#" method="post" class="content__form">
       <div class="content__wrapper">
         <h1 class="title title--big">Конструктор пиццы</h1>
 
@@ -54,12 +58,13 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { usePizzaStore } from "@/stores/pizza";
 import { useDataStore } from "@/stores/data";
 
 const pizzaStore = usePizzaStore();
 const dataStore = useDataStore();
+const isLoading = ref(true);
 
 import DoughSelector from "@/common/components/DoughSelector.vue";
 import SauceSelector from "@/common/components/SauceSelector.vue";
@@ -67,7 +72,23 @@ import IngredientsSelector from "@/common/components/IngredientsSelector.vue";
 import SizeSelector from "@/common/components/SizeSelector.vue";
 import PizzaDisplay from "@/common/components/PizzaDisplay.vue";
 
-onMounted(() => {
+// Следим за загрузкой данных
+watch(
+  () => dataStore.isDataLoaded,
+  (loaded) => {
+    if (loaded) {
+      isLoading.value = false;
+    }
+  },
+  { immediate: true },
+);
+
+onMounted(async () => {
+  // Если данные ещё не загружены, ждём
+  if (!dataStore.isDataLoaded) {
+    await dataStore.loadData();
+  }
+
   // Если данные уже загружены, устанавливаем дефолты
   if (dataStore.doughs.length && pizzaStore.dough === null) {
     pizzaStore.dough = dataStore.doughs[0];
@@ -78,6 +99,8 @@ onMounted(() => {
   if (dataStore.sauces.length && pizzaStore.sauce === null) {
     pizzaStore.sauce = dataStore.sauces[0];
   }
+
+  isLoading.value = false;
 });
 
 const handleIngredientChange = (ingredient, newCount) => {
@@ -97,6 +120,44 @@ const handleDropIngredient = (ingredient) => {
 <style lang="scss">
 @import "@/assets/scss/ds-system/ds.scss";
 @import "@/assets/scss/mixins/mixins.scss";
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+
+  p {
+    margin-top: 20px;
+    color: $green-500;
+    font-size: 16px;
+  }
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid $green-100;
+  border-bottom-color: $green-500;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.content__form {
+  animation: fadeIn 0.3s ease;
+}
 
 .content {
   padding-top: 20px;
