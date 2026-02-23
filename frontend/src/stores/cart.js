@@ -49,10 +49,19 @@ export const useCartStore = defineStore("cart", {
 
       const pizzaStore = usePizzaStore();
 
-      // Восстанавливаем состояние конструктора
+      // Преобразуем ingredients в формат counts
+      const ingredientsCounts = {};
+      pizza.ingredients.forEach((item) => {
+        ingredientsCounts[item.id] = item.quantity || 0;
+      });
+
+      // Обновляем стор
       pizzaStore.$patch({
-        ...pizza,
-        ingredients: this.convertToIngredientsObject(pizza.ingredients),
+        name: pizza.name || "",
+        dough: pizza.dough,
+        size: pizza.size,
+        sauce: pizza.sauce,
+        ingredientsCounts,
       });
 
       // Удаляем пиццу из корзины
@@ -101,12 +110,35 @@ export const useCartStore = defineStore("cart", {
         };
       }
     },
-
+  
     convertToIngredientsObject(ingredientsArray) {
-      return ingredientsArray.reduce((acc, item) => {
-        acc[item.id] = { ingredient: item, count: item.quantity };
+      // Преобразуем Proxy в обычный массив
+      const rawArray = toRaw(ingredientsArray);
+
+      const dataStore = useDataStore();
+      const rawDataStoreIngredients = toRaw(dataStore.ingredients);
+
+      const res = rawArray.reduce((acc, item) => {
+        const ingredientId = item.id || item.ingredient?.id;
+        const count = item.quantity || item.count || 0;
+
+        if (!ingredientId) return acc;
+
+        const fullIngredient = rawDataStoreIngredients.find(
+          (ing) => ing.id === ingredientId,
+        );
+
+        if (fullIngredient) {
+          acc[ingredientId] = {
+            ingredient: fullIngredient,
+            count: count,
+          };
+        }
+
         return acc;
       }, {});
+
+      return res;
     },
 
     updateMisc(itemId, quantity) {

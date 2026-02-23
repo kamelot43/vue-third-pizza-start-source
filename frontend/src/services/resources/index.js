@@ -8,7 +8,7 @@ import { SizeResource } from "@/services/resources/size.resource";
 import { AuthService } from "../api/auth.service";
 
 export default {
-  auth: new AuthService("/api"),
+  auth: new AuthService(),
   address: new AddressResource(),
   dough: new DoughResource(),
   ingredient: new IngredientResource(),

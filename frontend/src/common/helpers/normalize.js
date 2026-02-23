@@ -1,6 +1,6 @@
 import doughSizes from "@/common/data/doughSizes";
 import { ingredientNameToValue } from "@/common/data/ingredients";
-import sauces from "@/common/data/sauces";
+import { sauceNameToValue } from "@/common/data/sauces";
 import sizes from "@/common/data/sizes";
 
 export const normalizeDough = (dough) => {
@@ -27,8 +27,9 @@ export const normalizeIngredients = (ingredient) => {
 };
 
 export const normalizeSauces = (sauce) => {
+  const value = sauceNameToValue[sauce.name] || "unknown";
   return {
     ...sauce,
-    value: sauces[sauce.id],
+    value,
   };
 };

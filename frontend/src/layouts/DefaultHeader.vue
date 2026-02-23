@@ -59,6 +59,8 @@ const formattedTotal = computed(() => {
 });
 
 </script>
+
+
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds";
 
@@ -189,7 +191,7 @@ const formattedTotal = computed(() => {
     content: "";
     vertical-align: middle;
 
-    background: url("/api/public/img/login.svg") no-repeat center;
+    background: v-bind('$getCssUrl("/public/img/login.svg")') no-repeat center;
     background-size: auto 50%;
   }
 }

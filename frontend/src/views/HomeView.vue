@@ -54,6 +54,7 @@
 </template>
 
 <script setup>
+import { onMounted } from "vue";
 import { usePizzaStore } from "@/stores/pizza";
 import { useDataStore } from "@/stores/data";
 
@@ -65,6 +66,19 @@ import SauceSelector from "@/common/components/SauceSelector.vue";
 import IngredientsSelector from "@/common/components/IngredientsSelector.vue";
 import SizeSelector from "@/common/components/SizeSelector.vue";
 import PizzaDisplay from "@/common/components/PizzaDisplay.vue";
+
+onMounted(() => {
+  // Если данные уже загружены, устанавливаем дефолты
+  if (dataStore.doughs.length && pizzaStore.dough === null) {
+    pizzaStore.dough = dataStore.doughs[0];
+  }
+  if (dataStore.sizes.length && pizzaStore.size === null) {
+    pizzaStore.size = dataStore.sizes[0];
+  }
+  if (dataStore.sauces.length && pizzaStore.sauce === null) {
+    pizzaStore.sauce = dataStore.sauces[0];
+  }
+});
 
 const handleIngredientChange = (ingredient, newCount) => {
   // Проверяем максимальное значение
@@ -707,19 +721,27 @@ const handleDropIngredient = (ingredient) => {
   background-size: 100%;
 
   &--foundation--big-creamy {
-    background-image: v-bind('$getCssUrl("/public/img/foundation/big-creamy.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/foundation/big-creamy.svg")'
+    );
   }
 
   &--foundation--big-tomato {
-    background-image: v-bind('$getCssUrl("/public/img/foundation/big-tomato.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/foundation/big-tomato.svg")'
+    );
   }
 
   &--foundation--small-creamy {
-    background-image: v-bind('$getCssUrl("/public/img/foundation/small-creamy.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/foundation/small-creamy.svg")'
+    );
   }
 
   &--foundation--small-tomato {
-    background-image: v-bind('$getCssUrl("/public/img/foundation/small-tomato.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/foundation/small-tomato.svg")'
+    );
   }
 }
 
@@ -784,7 +806,9 @@ const handleDropIngredient = (ingredient) => {
   &--ananas,
   &--ananas.pizza__filling--second::before,
   &--ananas.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/ananas.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/ananas.svg")'
+    );
   }
 
   &--bacon,
@@ -796,13 +820,17 @@ const handleDropIngredient = (ingredient) => {
   &--blue_cheese,
   &--blue.pizza__filling--second::before,
   &--blue.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/blue_cheese.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/blue_cheese.svg")'
+    );
   }
 
   &--cheddar,
   &--cheddar.pizza__filling--second::before,
   &--cheddar.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/cheddar.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/cheddar.svg")'
+    );
   }
 
   &--chile,
@@ -820,25 +848,33 @@ const handleDropIngredient = (ingredient) => {
   &--jalapeno,
   &--jalapeno.pizza__filling--second::before,
   &--jalapeno.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/jalapeno.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/jalapeno.svg")'
+    );
   }
 
   &--mozzarella,
   &--mozzarella.pizza__filling--second::before,
   &--mozzarella.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/mozzarella.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/mozzarella.svg")'
+    );
   }
 
   &--mushrooms,
   &--mushrooms.pizza__filling--second::before,
   &--mushrooms.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/mushrooms.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/mushrooms.svg")'
+    );
   }
 
   &--olives,
   &--olives.pizza__filling--second::before,
   &--olives.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/olives.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/olives.svg")'
+    );
   }
 
   &--onion,
@@ -850,25 +886,33 @@ const handleDropIngredient = (ingredient) => {
   &--parmesan,
   &--parmesan.pizza__filling--second::before,
   &--parmesan.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/parmesan.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/parmesan.svg")'
+    );
   }
 
   &--salami,
   &---salami.pizza__filling--second::before,
   &---salami.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/salami.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/salami.svg")'
+    );
   }
 
   &--salmon,
   &--salmon.pizza__filling--second::before,
   &--salmon.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/salmon.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/salmon.svg")'
+    );
   }
 
   &--tomatoes,
   &--tomatoes.pizza__filling--second::before,
   &--tomatoes.pizza__filling--third::after {
-    background-image: v-bind('$getCssUrl("/public/img/filling-big/tomatoes.svg")');
+    background-image: v-bind(
+      '$getCssUrl("/public/img/filling-big/tomatoes.svg")'
+    );
   }
 }
 
@@ -928,4 +972,3 @@ const handleDropIngredient = (ingredient) => {
   }
 }
 </style>
-

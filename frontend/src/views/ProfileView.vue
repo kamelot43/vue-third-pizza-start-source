@@ -350,7 +350,7 @@ const formatAddress = (address) => {
   border-radius: 50%;
   outline: none;
   background-color: $white;
-  background-image: url("/api/public/img/edit.svg");
+  background-image: v-bind('$getCssUrl("/public/img/edit.svg")');
   background-repeat: no-repeat;
   background-position: center;
 

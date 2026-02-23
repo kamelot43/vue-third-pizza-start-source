@@ -2,21 +2,53 @@
   <transition name="popup">
     <div v-if="popup.isVisible" class="popup-overlay" @click.self="close">
       <div class="popup">
-        <button type="button" class="close" @click="confirm">
+        <button type="button" class="close" @click="close">
           <span class="visually-hidden">Закрыть попап</span>
         </button>
 
-        <div class="popup__title">
-          <h2 class="title">Спасибо за заказ</h2>
-        </div>
+        <!-- Успешный заказ -->
+        <template v-if="popup.type === 'success'">
+          <div class="popup__title">
+            <h1 class="title">Спасибо за заказ!</h1>
+          </div>
 
-        <p>Мы начали готовить Ваш заказ, скоро привезём его вам ;)</p>
+          <p>Мы начали готовить Ваш заказ. Скоро привезём его вам ;)</p>
 
-        <div class="popup__button">
-          <button type="button" class="button" @click="confirm">
-            Отлично, я жду!
-          </button>
-        </div>
+          <div class="popup__button">
+            <button type="button" class="button" @click="goToOrders">
+              Отлично, я жду!
+            </button>
+          </div>
+        </template>
+
+        <!-- Ошибка при заказе -->
+        <template v-else-if="popup.type === 'error'">
+          <div class="popup__title">
+            <h1 class="title">Что-то пошло не так</h1>
+          </div>
+
+          <p>
+            Не удалось оформить заказ. Пожалуйста, попробуйте ещё раз или
+            обратитесь в поддержку.
+          </p>
+
+          <div class="popup__button">
+            <button type="button" class="button" @click="close">Понятно</button>
+          </div>
+        </template>
+
+        <!-- По умолчанию (для обратной совместимости) -->
+        <template v-else>
+          <div class="popup__title">
+            <h2 class="title">{{ popup.title || "Уведомление" }}</h2>
+          </div>
+
+          <p>{{ popup.message || "Операция выполнена" }}</p>
+
+          <div class="popup__button">
+            <button type="button" class="button" @click="close">ОК</button>
+          </div>
+        </template>
       </div>
     </div>
   </transition>
@@ -40,7 +72,7 @@ const close = () => {
   popup.hide();
 };
 
-const confirm = () => {
+const goToOrders = () => {
   popup.hide();
   router.push({ name: redirectRouteName.value });
 };
@@ -72,7 +104,7 @@ const confirm = () => {
 
   box-sizing: border-box;
   width: 420px;
-  padding: 64px 95px;
+  padding: 85px 50px;
 
   background-color: $white;
   box-shadow: $shadow-light;
@@ -95,14 +127,14 @@ const confirm = () => {
     top: 15px;
     left: 15px;
 
-    background-image: url("/api/public/img/filling/ananas.svg");
+    background-image: v-bind('$getCssUrl("/public/img/filling/ananas.svg")');
   }
 
   &::after {
     right: 15px;
     bottom: 15px;
 
-    background-image: url("/api/public/img/filling/tomatoes.svg");
+    background-image: v-bind('$getCssUrl("/public/img/filling/tomatoes.svg")');
   }
 
   p {

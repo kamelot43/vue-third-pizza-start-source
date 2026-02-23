@@ -4,9 +4,9 @@ import { useDataStore } from "@/stores/data";
 export const usePizzaStore = defineStore("pizza", {
   state: () => ({
     name: "",
-    dough: [],
-    size: [],
-    sauce: [],
+    dough: null,
+    size: null,
+    sauce: null,
     ingredientsCounts: {},
   }),
   getters: {
@@ -82,6 +82,7 @@ export const usePizzaStore = defineStore("pizza", {
         console.warn("Достигнут лимит для:", ingredient.name);
       }
     },
+
     logState() {
       console.log("Current store state:", {
         name: this.name,

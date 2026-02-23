@@ -1,4 +1,4 @@
-export default {
-  1: "tomato",
-  2: "creamy",
+export const sauceNameToValue = {
+  Томатный: "tomato",
+  Сливочный: "creamy",
 };

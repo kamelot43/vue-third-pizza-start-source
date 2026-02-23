@@ -46,10 +46,10 @@ const checkLoggedIn = async () => {
 onMounted(async () => {
   // Загружаем данные
   await dataStore.loadData();
-  
+
   // Проверяем авторизацию (не блокируем загрузку данных)
   await checkLoggedIn();
-  
+
   // Устанавливаем значения по умолчанию для конструктора пиццы
   if (dataStore.doughs.length) {
     pizzaStore.setDough(dataStore.doughs[0]);

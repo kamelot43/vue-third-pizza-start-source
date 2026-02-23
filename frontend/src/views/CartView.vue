@@ -76,6 +76,7 @@ import { useCartStore } from "@/stores/cart";
 import { useOrdersStore } from "@/stores/orders";
 import { usePopupStore } from "@/stores/popup";
 import { useAuthStore } from "@/stores/auth";
+import { usePizzaStore } from "@/stores/pizza";
 import { useRouter } from "vue-router";
 import { computed, onMounted } from "vue";
 import PizzaCartItem from "@/common/components/PizzaCartItem.vue";
@@ -89,6 +90,7 @@ const cart = useCartStore();
 const data = useDataStore();
 const orders = useOrdersStore();
 const popup = usePopupStore();
+const pizzaStore = usePizzaStore();
 
 onMounted(() => {
   if (auth.isAuthenticated && auth.user?.phone && !cart.phone) {
@@ -125,17 +127,28 @@ const isFormValid = computed(() => {
 const submitOrder = async () => {
   try {
     const res = await orders.submitCart(cart, auth);
+    if (data.doughs.length) {
+      pizzaStore.setDough(data.doughs[0]);
+    }
+    if (data.sizes.length) {
+      pizzaStore.setSize(data.sizes[0]);
+    }
+    if (data.sauces.length) {
+      pizzaStore.setSauce(data.sauces[0]);
+    }
 
     if (!res || res.__state !== "success") {
       const msg = res?.data?.message || "Не удалось оформить заказ";
-      throw new Error(msg);
+      popup.showError(msg);
+      return; // Не сбрасываем корзину при ошибке
     }
 
     cart.$reset();
-    popup.show();
+
+    popup.showSuccess(); // или просто popup.show()
   } catch (e) {
     console.error(e);
-    alert(e.message || "Ошибка при оформлении заказа");
+    popup.showError(e.message || "Ошибка при оформлении заказа");
   }
 };
 </script>
