@@ -57,9 +57,7 @@ const logout = async () => {
 const formattedTotal = computed(() => {
   return cartStore.total.toLocaleString("ru-RU");
 });
-
 </script>
-
 
 <style lang="scss" scoped>
 @import "@/assets/scss/ds-system/ds";

@@ -10,9 +10,9 @@ axios.defaults.baseURL = baseURL;
 
 const app = createApp(App);
 
-const staticBase = import.meta.env.VITE_STATIC_URL || 'http://localhost:3000';
+const staticBase = import.meta.env.VITE_STATIC_URL || "http://localhost:3000";
 app.config.globalProperties.$getCssUrl = (path) => {
-  const cleanPath = path.replace(/^\/api/, '').replace(/^\//, '');
+  const cleanPath = path.replace(/^\/api/, "").replace(/^\//, "");
   return `url(${staticBase}/${cleanPath})`;
 };
 

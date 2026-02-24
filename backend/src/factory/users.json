@@ -3,7 +3,7 @@
     "name": "John Snow",
     "email": "user@example.com",
     "password": "user@example.com",
-    "avatar": "/public/img/users/user.jpg",
+    "avatar": "/public/img/users/user@4x.jpg",
     "phone": "+777 777 777"
   }
 ]

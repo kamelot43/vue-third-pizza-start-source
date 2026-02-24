@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Тесто пиццы (основа) -->
+  <circle cx="50" cy="50" r="45" fill="#f4d03f"/>
+  <!-- Корочка (бортик) -->
+  <circle cx="50" cy="50" r="45" fill="none" stroke="#d35400" stroke-width="6"/>
+  
+  <!-- Пепперони (красные кружки) -->
+  <circle cx="35" cy="40" r="8" fill="#c0392b"/>
+  <circle cx="65" cy="40" r="8" fill="#c0392b"/>
+  <circle cx="45" cy="65" r="7" fill="#c0392b"/>
+  <circle cx="70" cy="60" r="6" fill="#c0392b"/>
+  
+  <!-- Оливки (зеленые) -->
+  <circle cx="25" cy="55" r="6" fill="#27ae60"/>
+  <circle cx="55" cy="25" r="6" fill="#27ae60"/>
+  
+  <!-- Грибы (коричневые) -->
+  <circle cx="75" cy="30" r="7" fill="#8b4513"/>
+  <circle cx="20" cy="30" r="6" fill="#8b4513"/>
+  
+  <!-- Сыр (желтые пятна) -->
+  <circle cx="50" cy="70" r="10" fill="#f1c40f" opacity="0.7"/>
+  <circle cx="30" cy="75" r="8" fill="#f1c40f" opacity="0.7"/>
+</svg>

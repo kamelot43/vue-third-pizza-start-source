@@ -33,7 +33,9 @@ export const useOrdersStore = defineStore("orders", {
         misc: dataStore.misc,
       };
 
-      this.orders = res.data.map((raw) => normalizeOrder(raw, catalogs));
+      this.orders = res.data
+        .map((raw) => normalizeOrder(raw, catalogs))
+        .sort((a, b) => b.id - a.id);
     },
 
     async addOrder(orderData) {

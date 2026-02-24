@@ -110,7 +110,7 @@ export const useCartStore = defineStore("cart", {
         };
       }
     },
-  
+
     convertToIngredientsObject(ingredientsArray) {
       // Преобразуем Proxy в обычный массив
       const rawArray = toRaw(ingredientsArray);
