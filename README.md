@@ -6,7 +6,11 @@
 ## 🚀 Demo
 https://vue-third-pizza-start-source.vercel.app/
 
-✨ Возможности
+## 🌐 Деплой
+Фронтенд задеплоен на Vercel
+Бэкенд и PostgreSQL развёрнуты на
+
+## ✨ Возможности
 
 - Конструктор пиццы – выбор теста (тонкое/толстое), размера (23/32/45 см), соуса (сливочный/томатный) и до 15 видов ингредиентов (до 3 порций каждого).
 - Drag & Drop – ингредиенты можно перетаскивать прямо на изображение пиццы.
@@ -18,11 +22,12 @@ https://vue-third-pizza-start-source.vercel.app/
 - Адаптивный дизайн – удобная работа на любых устройствах.
 
 ## 🛠 Стек технологий
-Frontend: Vue 3, Pinia, Vue Router, Vite, SCSS, Drag & Drop API.
 
-Backend: Node.js, LoopBack 4, PostgreSQL, JWT.
+**Frontend:** Vue 3, Pinia, Vue Router, Vite, SCSS, Drag & Drop API.
 
-Инфраструктура: Docker, Docker Compose.
+**Backend:** Node.js, LoopBack 4, PostgreSQL, JWT.
+
+**Инфраструктура:** Docker, Docker Compose.
 
 ## Быстрый старт
 Требования
@@ -37,12 +42,12 @@ GNU Make (опционально, для удобных команд)
 bash
 
 
-# Установка зависимостей
+## Установка зависимостей
 ```
 make install_dependencies
 ```
 
-# Запуск всех сервисов (база данных, бэкенд, фронтенд)
+## Запуск всех сервисов (база данных, бэкенд, фронтенд)
 ```
 make start_project
 ```
@@ -84,7 +89,7 @@ docker compose down -v   # (опционально) очистить тома
 docker compose build
 docker compose up
 ```
-🔐 Тестовый пользователь
+## 🔐 Тестовый пользователь
 Для входа в приложение можно использовать предустановленного пользователя:
 
 text
@@ -92,7 +97,7 @@ email: user@example.com
 password: user@example.com
 Данные для входа можно изменить в файле backend/src/factory/users.json.
 
-📚 Документация API
+## 📚 Документация API
 После запуска бэкенда документация OpenAPI доступна по адресу:
 
 text
@@ -112,14 +117,13 @@ npm run lint        # проверка кода
 cd backend
 npm run lint
 ```
-📦 Сборка продакшн-версии
+## 📦 Сборка продакшн-версии
+
 ```
 bash
 cd frontend
 npm run build
 ```
-
-Готовая статика будет в папке frontend/dist. Её можно развернуть на любом статическом хостинге (Vercel, Netlify и др.), не забыв задать переменную окружения VITE_API_URL с адресом бэкенда.
 
 ## 🎨 Шаблон и вёрстка
 В папке template находится готовая вёрстка проекта. Для её просмотра выполните:
