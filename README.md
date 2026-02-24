@@ -7,8 +7,8 @@
 https://vue-third-pizza-start-source.vercel.app/
 
 ## 🌐 Деплой
-Фронтенд задеплоен на **Vercel**
-Бэкенд и PostgreSQL развёрнуты на **Railway**
+- Фронтенд задеплоен на **Vercel**
+- Бэкенд и PostgreSQL развёрнуты на **Railway**
 
 ## ✨ Возможности
 
